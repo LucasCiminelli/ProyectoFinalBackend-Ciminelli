@@ -16,13 +16,11 @@ class ProductManager {
       }
     }
   }
-  
 
   async getProducts() {
     const data = JSON.parse(await fs.promises.readFile(this.path, "utf-8"));
     return data;
   }
-
 
   async addProduct(title, description, price, thumbnail, code, stock) {
     const product = {
@@ -61,7 +59,6 @@ class ProductManager {
     }
   }
 
-
   async getProductsById(id) {
     const data = await this.getProducts();
     const foundProduct = data.find((prod) => prod.id === id);
@@ -73,7 +70,6 @@ class ProductManager {
     }
     return foundProduct;
   }
-
 
   async deleteProduct(id) {
     const data = await this.getProducts();
@@ -95,7 +91,6 @@ class ProductManager {
     }
   }
 
-
   async updateProduct(id, productChanged) {
     const data = await this.getProducts();
     const findProduct = data.find((prod) => prod.id === id);
@@ -111,7 +106,6 @@ class ProductManager {
     }
   }
 
-
   async getProductRepetido(code) {
     const data = await this.getProducts();
     const repetido = data.find((prod) => prod.code === code);
@@ -123,18 +117,19 @@ class ProductManager {
   }
 }
 
+// const asyncFunction = async () => {
+//   const manager = new ProductManager();
+//   await manager.addProduct(
+//     "producto prueba2",
+//     "Este es un producto prueba",
+//     200,
+//     "Sin imagen",
+//     "abc123",
+//     25
+//   );
+//   await manager.getProducts();
+// };
 
-const asyncFunction = async () => {
-  const manager = new ProductManager();
-  await manager.addProduct(
-    "producto prueba2",
-    "Este es un producto prueba",
-    200,
-    "Sin imagen",
-    "abc123",
-    25
-  );
-  await manager.getProducts();
-};
+// asyncFunction();
 
-asyncFunction();
+module.exports = ProductManager;
