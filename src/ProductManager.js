@@ -118,18 +118,18 @@ class ProductManager {
 }
 
 // const asyncFunction = async () => {
-//   const manager = new ProductManager();
+//    const manager = new ProductManager();
 //   await manager.addProduct(
-//     "producto prueba2",
-//     "Este es un producto prueba",
+//      "producto prueba2",
+//      "Este es un producto prueba",
 //     200,
-//     "Sin imagen",
-//     "abc123",
-//     25
+//      "Sin imagen",
+//      "abc123",
+//      25
 //   );
-//   await manager.getProducts();
-// };
+//    await manager.getProducts();
+//  };
 
-// asyncFunction();
+//  asyncFunction();
 
 module.exports = ProductManager;

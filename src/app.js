@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get("/products", async (req, res) => {
   const limit = req.query.limit;
-  const products = await ProductManager.getProducts();
+  const products = await productManager.getProducts();
 
   if (limit) {
     return res.send(products.slice(0, limit));
@@ -19,7 +19,7 @@ app.get("/products", async (req, res) => {
 
 app.get("/products/:pid", async (req, res) => {
   const productId = parseInt(req.params.pid, 10);
-  const product = await ProductManager.getProductsById(productId);
+  const product = await productManager.getProductsById(productId);
 
   res.send(product);
 });
