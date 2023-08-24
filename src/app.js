@@ -23,3 +23,5 @@ app.get("/products/:pid", async (req, res) => {
 
   res.send(product);
 });
+
+app.listen(8080, () => console.log("tuki"));
