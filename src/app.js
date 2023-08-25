@@ -21,6 +21,10 @@ app.get("/products/:pid", async (req, res) => {
   const productId = parseInt(req.params.pid, 10);
   const product = await productManager.getProductsById(productId);
 
+  if (product === undefined) {
+    return res.status(404).send();
+  }
+
   res.send(product);
 });
 
