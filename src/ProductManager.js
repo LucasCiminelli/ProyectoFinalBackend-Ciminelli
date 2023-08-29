@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs";
 
 class ProductManager {
   products;
@@ -14,7 +14,13 @@ class ProductManager {
       if (products.length > 0) {
         ProductManager.id = products[products.length - 1].id + 1;
       }
+    } else {
+      ProductManager.id = 1;
     }
+  }
+
+  generateUniqueId() {
+    return ProductManager.id++;
   }
 
   async getProducts() {
@@ -73,9 +79,11 @@ class ProductManager {
 
   async deleteProduct(id) {
     const data = await this.getProducts();
+
     const findDelete = data.findIndex((prod) => prod.id === id);
+
     if (findDelete !== -1) {
-      data.splice(findDelete, 1);
+      const deletedProduct = data.splice(findDelete, 1)[0];
 
       try {
         await fs.promises.writeFile(
@@ -83,11 +91,14 @@ class ProductManager {
           JSON.stringify(data, null, "\t")
         );
         console.log(`Producto con id: ${id} eliminado.`);
+        return deletedProduct;
       } catch (err) {
         console.log(err);
+        return null;
       }
     } else {
       console.log("No se encontro el producto que se desea eliminar");
+      return null;
     }
   }
 
@@ -132,4 +143,4 @@ class ProductManager {
 
 //  asyncFunction();
 
-module.exports = ProductManager;
+export default ProductManager;
