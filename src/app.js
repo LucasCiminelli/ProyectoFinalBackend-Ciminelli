@@ -1,9 +1,8 @@
 import express from "express";
-import ProductManager from "./ProductManager.js";
 import productsRouter from "./routes/productsRouter.js";
 import cartRouter from "./routes/cartRouter.js";
 
-const productManager = new ProductManager();
+
 
 const app = express();
 

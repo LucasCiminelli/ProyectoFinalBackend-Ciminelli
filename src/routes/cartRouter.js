@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/:cid", async (req, res) => {
-  const id = parseInt(req.params.cid);
+  const id = parseInt(req.params.cid, 10);
   const findCartId = await cartManager.getCartsById(id);
 
   if (!findCartId) {
@@ -24,8 +24,8 @@ router.get("/:cid", async (req, res) => {
 });
 
 router.post("/:cid/product/:pid", async (req, res) => {
-  const cid = parseInt(req.params.cid);
-  const pid = parseInt(req.params.pid);
+  const cid = parseInt(req.params.cid, 10);
+  const pid = parseInt(req.params.pid, 10);
   const quantity = req.body.quantity;
 
   const findCart = await cartManager.getCartsById(cid);
