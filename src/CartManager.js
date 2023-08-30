@@ -69,9 +69,9 @@ class CartManager {
     );
 
     if (existingProduct) {
-      existingProduct += quantity;
+      existingProduct.quantity += quantity;
     } else {
-      cart.products.push({ id: prodId, quantity: 1 });
+      foundCart.products.push({ id: prodId, quantity: 1 });
     }
 
     await this.saveChanges();
