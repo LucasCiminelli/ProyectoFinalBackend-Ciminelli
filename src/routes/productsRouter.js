@@ -26,7 +26,6 @@ router.get("/:pid", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-
   try {
     const product = req.body;
 
@@ -43,6 +42,8 @@ router.post("/", async (req, res) => {
     }
 
     await productManager.addProduct({ ...product, status: true });
+    const products = await productManager.getProducts();
+    req.context.socketServer.emit("update_products", products);
 
     res.status(200).json(product);
   } catch (error) {
@@ -59,6 +60,8 @@ router.put("/:pid", async (req, res) => {
     id,
     prodActualizado
   );
+  const products = await productManager.getProducts();
+  req.context.socketServer.emit("update_products", products);
 
   if (updatedProduct) {
     res.status(200).send(updatedProduct);
@@ -71,9 +74,15 @@ router.delete("/:pid", async (req, res) => {
   const prodId = parseInt(req.params.pid, 10);
 
   const deletedProduct = await productManager.deleteProduct(prodId);
+  const products = await productManager.getProducts();
+  req.context.socketServer.emit("update_products", products);
 
   if (deletedProduct) {
-    res.status(200).send(`Producto Eliminado Correctamente: ${deletedProduct}`);
+    res
+      .status(200)
+      .send(
+        `Producto Eliminado Correctamente. El codigo del producto eliminado es: ${deletedProduct.code}`
+      );
   } else {
     res.status(404).send("Producto no encontrado");
   }
