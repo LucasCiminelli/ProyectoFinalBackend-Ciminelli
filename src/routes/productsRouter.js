@@ -26,37 +26,23 @@ router.get("/:pid", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const uniqueId = productManager.generateUniqueId();
 
   try {
-    const { title, description, code, price, stock, category, thumbnails } =
-      req.body;
+    const product = req.body;
 
     if (
-      !title ||
-      !description ||
-      !code ||
-      !price ||
-      !stock ||
-      !category ||
-      !thumbnails
+      !product.title ||
+      !product.description ||
+      !product.code ||
+      !product.price ||
+      !product.stock ||
+      !product.category ||
+      !product.thumbnails
     ) {
       return res.status(400).send("Faltan completar campos obligatorios");
     }
 
-    const product = {
-      id: uniqueId,
-      title,
-      description,
-      code,
-      price,
-      stock,
-      category,
-      thumbnails: thumbnails || [],
-      status: true,
-    };
-
-    await productManager.addProduct(product);
+    await productManager.addProduct({ ...product, status: true });
 
     res.status(200).json(product);
   } catch (error) {

@@ -205,5 +205,112 @@
 		"thumbnail": "Sin imagen",
 		"code": "abc123",
 		"stock": 25
+	},
+	{
+		"id": 25,
+		"title": {
+			"id": 24,
+			"title": "productazo",
+			"description": "prod",
+			"code": "abc222",
+			"price": 300,
+			"stock": "25",
+			"category": "asd",
+			"thumbnails": [
+				"imagen1.jpg"
+			],
+			"status": true
+		}
+	},
+	{
+		"id": 27,
+		"title": {
+			"id": 26,
+			"title": "productazo2",
+			"description": "prod",
+			"code": "abc222",
+			"price": 300,
+			"stock": "25",
+			"category": "asd",
+			"thumbnails": [
+				"imagen1.jpg"
+			],
+			"status": true
+		}
+	},
+	{
+		"id": 29,
+		"title": "productazo4",
+		"description": "prod",
+		"price": 300,
+		"code": "abc222",
+		"stock": "25",
+		"category": "asd",
+		"thumbnails": [
+			"imagen1.jpg"
+		]
+	},
+	{
+		"id": 32,
+		"title": "productazo6",
+		"description": "prod",
+		"price": 300,
+		"code": "abc2223",
+		"stock": "25",
+		"category": "asd",
+		"thumbnails": [
+			"imagen1.jpg"
+		]
+	},
+	{
+		"id": 35,
+		"title": "productazo9",
+		"description": "prod",
+		"price": 300,
+		"code": "abc222322",
+		"stock": "25",
+		"category": "asd",
+		"thumbnails": [
+			"imagen1.jpg"
+		]
+	},
+	{
+		"id": 37,
+		"title": "productazo10",
+		"description": "prod",
+		"price": 300,
+		"code": "abc342",
+		"stock": "25",
+		"category": "asd",
+		"thumbnails": [
+			"imagen1.jpg"
+		],
+		"status": true
+	},
+	{
+		"id": 38,
+		"title": "productazo11",
+		"description": "prod",
+		"price": 300,
+		"code": "abc3422",
+		"stock": "25",
+		"category": "asd",
+		"thumbnails": [
+			"imagen1.jpg"
+		],
+		"status": true
+	},
+	{
+		"id": 39,
+		"title": "productazo11",
+		"description": "prod",
+		"price": 300,
+		"code": "abc34223",
+		"stock": "25",
+		"category": "asd",
+		"thumbnails": [
+			"imagen1.jpg"
+		],
+		"status": true
 	}
 ]

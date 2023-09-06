@@ -28,41 +28,60 @@ class ProductManager {
     return data;
   }
 
-  async addProduct(title, description, price, thumbnail, code, stock) {
-    const product = {
-      id: ProductManager.id,
-      title,
-      description,
-      price,
-      thumbnail,
-      code,
-      stock,
-    };
-
+  async addProduct(newProduct) {
     try {
-      if (!fs.existsSync(this.path)) {
-        const arrayProducts = [];
-        arrayProducts.push(product);
+      const productsContent = await fs.promises.readFile(this.path, "utf-8");
+      const products = JSON.parse(productsContent);
 
-        await fs.promises.writeFile(
-          this.path,
-          JSON.stringify(arrayProducts, null, "\t")
-        );
-      } else {
-        const content = await this.getProducts();
-        console.log("File content:", content);
-
-        content.push(product);
-        await fs.promises.writeFile(
-          this.path,
-          JSON.stringify(content, null, "\t")
-        );
-
-        ProductManager.id++;
+      if (products.find((prod) => prod.code === newProduct.code)) {
+        return console.log("Error, el codigo ya existe");
       }
+
+      const productFinal = { id: this.generateUniqueId(), ...newProduct };
+
+      products.push(productFinal);
+      await fs.promises.writeFile(
+        this.path,
+        JSON.stringify(products, null, "\t")
+      );
     } catch (error) {
       console.log(error);
     }
+
+    // const product = {
+    //   id: ProductManager.id,
+    //   title,
+    //   description,
+    //   price,
+    //   thumbnail,
+    //   code,
+    //   stock,
+    // };
+
+    // try {
+    //   if (!fs.existsSync(this.path)) {
+    //     const arrayProducts = [];
+    //     arrayProducts.push(product);
+
+    //     await fs.promises.writeFile(
+    //       this.path,
+    //       JSON.stringify(arrayProducts, null, "\t")
+    //     );
+    //   } else {
+    //     const content = await this.getProducts();
+    //     console.log("File content:", content);
+
+    //     content.push(product);
+    //     await fs.promises.writeFile(
+    //       this.path,
+    //       JSON.stringify(content, null, "\t")
+    //     );
+
+    //     ProductManager.id++;
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   async getProductsById(id) {
