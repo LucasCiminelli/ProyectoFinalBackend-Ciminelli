@@ -1,5 +1,7 @@
 import { Router } from "express";
-import ProductManager from "../ProductManager.js";
+import ProductManager from "../dao/database/productManager.js";
+//import ProductManager from "../dao/filesystem/ProductManager.js";
+import { uploader } from "../middlewares/multer.js";
 
 const productManager = new ProductManager();
 const router = Router();
@@ -15,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:pid", async (req, res) => {
-  const productId = parseInt(req.params.pid, 10);
+  const productId = req.params.pid;
   const product = await productManager.getProductsById(productId);
 
   if (product === undefined) {
@@ -25,7 +27,7 @@ router.get("/:pid", async (req, res) => {
   res.send(product);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", uploader.single("file"), async (req, res) => {
   try {
     const product = req.body;
 
@@ -53,7 +55,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:pid", async (req, res) => {
-  const id = parseInt(req.params.pid, 10);
+  const id = req.params.pid;
   const prodActualizado = req.body;
 
   const updatedProduct = await productManager.updateProduct(
@@ -71,18 +73,14 @@ router.put("/:pid", async (req, res) => {
 });
 
 router.delete("/:pid", async (req, res) => {
-  const prodId = parseInt(req.params.pid, 10);
+  const prodId = req.params.pid;
 
   const deletedProduct = await productManager.deleteProduct(prodId);
   const products = await productManager.getProducts();
   req.context.socketServer.emit("update_products", products);
 
   if (deletedProduct) {
-    res
-      .status(200)
-      .send(
-        `Producto Eliminado Correctamente. El codigo del producto eliminado es: ${deletedProduct.code}`
-      );
+    res.status(200).send(`Producto Eliminado Correctamente.`);
   } else {
     res.status(404).send("Producto no encontrado");
   }

@@ -13,19 +13,6 @@
 		"status": true
 	},
 	{
-		"id": 1,
-		"title": "productazo2",
-		"description": "prod",
-		"price": 300,
-		"code": "abc12",
-		"stock": "25",
-		"category": "asd",
-		"thumbnails": [
-			"imagen1.jpg"
-		],
-		"status": true
-	},
-	{
 		"id": 2,
 		"title": "productazo3",
 		"description": "prod",

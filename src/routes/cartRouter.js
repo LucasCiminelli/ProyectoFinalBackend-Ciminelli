@@ -1,10 +1,20 @@
 import { Router } from "express";
-import CartManager from "../CartManager.js";
-import ProductManager from "../ProductManager.js";
+//import CartManager from "../dao/filesystem/CartManager.js";
+import CartManager from "../dao/database/cartManager.js";
+import ProductManager from "../dao/filesystem/ProductManager.js";
 
 const cartManager = new CartManager();
 const productManager = new ProductManager();
 const router = Router();
+
+router.get("/", async (req, res) => {
+  try {
+    const carts = await cartManager.getCarts();
+    res.json(carts);
+  } catch (error) {
+    restart.status(500).json({ error: "Not found" });
+  }
+});
 
 router.post("/", async (req, res) => {
   const newCart = await cartManager.createCart();
@@ -13,19 +23,19 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/:cid", async (req, res) => {
-  const id = parseInt(req.params.cid, 10);
+  const id = req.params.cid;
   const findCartId = await cartManager.getCartsById(id);
 
   if (!findCartId) {
     res.status(404).send("Carrito no encontrdo");
   } else {
-    res.status(200).send(`Carrito: ${findCartId}`);
+    res.status(200).send(findCartId);
   }
 });
 
 router.post("/:cid/product/:pid", async (req, res) => {
-  const cid = parseInt(req.params.cid, 10);
-  const pid = parseInt(req.params.pid, 10);
+  const cid = req.params.cid;
+  const pid = req.params.pid;
   const quantity = req.body.quantity;
 
   const findCart = await cartManager.getCartsById(cid);
