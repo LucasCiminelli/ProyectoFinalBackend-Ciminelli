@@ -13,7 +13,7 @@ router.get("/realtimeproducts", async (req, res) => {
   res.render("realTimeProducts", {});
 });
 
-router.get("/chat", async (req, res) => {
+router.get("/chat", (req, res) => {
   res.render("chat", {});
 });
 
