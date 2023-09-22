@@ -1,4 +1,5 @@
 import { cartModel } from "../models/cart.model.js";
+import { productModel } from "../models/product.model.js";
 
 export default class CartManager {
   async getCarts() {
@@ -12,10 +13,10 @@ export default class CartManager {
   }
 
   async getCartsById(id) {
-    const foundCart = await cartModel.find({ _id: id }).lean();
+    const foundCart = await cartModel.findOne({ _id: id });
     if (!foundCart) {
       console.error("Error, Carrito no encontrado");
-      return;
+      return null;
     }
     return foundCart;
   }
@@ -28,21 +29,27 @@ export default class CartManager {
       return null;
     }
 
+    if (!foundCart.products) {
+      foundCart.products = [];
+    }
+
     const existingProduct = foundCart.products.find(
       (prod) => prod._id === prodId
     );
+    
 
     if (existingProduct) {
       existingProduct.quantity += quantity;
+      console.log(existingProduct)
     } else {
-      const productToAdd = await cartModel.findOne({ _id: prodId }).lean();
-    }
+      const productToAdd = await productModel.findOne({ _id: prodId }).lean();
 
-    if (productToAdd) {
-      foundCart.products.push({ _id: prodId, quantity: 1 });
-    } else {
-      console.error("Error, producto no encontrado");
-      return null;
+      if (productToAdd) {
+        foundCart.products.push({ _id: prodId, quantity: quantity }); // Corrección: Usar la cantidad proporcionada
+      } else {
+        console.error("Error, producto no encontrado");
+        return null;
+      }
     }
 
     await cartModel.findByIdAndUpdate(cartId, { products: foundCart.products });
