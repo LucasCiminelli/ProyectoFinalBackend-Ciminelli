@@ -18,6 +18,7 @@ export default class CartManager {
       console.error("Error, Carrito no encontrado");
       return null;
     }
+    console.log(foundCart);
     return foundCart;
   }
 
@@ -33,27 +34,43 @@ export default class CartManager {
       foundCart.products = [];
     }
 
-    const existingProduct = foundCart.products.find(
-      (prod) => prod._id === prodId
-    );
-    
+    const existingProduct = await cartModel
+      .findById({ _id: cartId })
+      .populate("products.product")
+      .lean();
 
     if (existingProduct) {
-      existingProduct.quantity += quantity;
-      console.log(existingProduct)
-    } else {
-      const productToAdd = await productModel.findOne({ _id: prodId }).lean();
+      const productToUpdate = existingProduct.products.find(
+        (prod) => prod.product._id.toString() === prodId
+      );
 
-      if (productToAdd) {
-        foundCart.products.push({ _id: prodId, quantity: quantity }); // Corrección: Usar la cantidad proporcionada
+      if (productToUpdate) {
+        productToUpdate.quantity += quantity;
+        console.log(productToUpdate);
       } else {
-        console.error("Error, producto no encontrado");
-        return null;
+        const productToAdd = await productModel.findOne({ _id: prodId }).lean();
+
+        if (productToAdd) {
+          existingProduct.products.push({
+            product: prodId,
+            quantity: quantity,
+          });
+        } else {
+          console.error(
+            "Error, producto no encontrado en el carrito ni en la base de datos"
+          );
+          return null;
+        }
       }
+    } else {
+      console.error("Error, carrito no encontrado");
+      return null;
     }
 
-    await cartModel.findByIdAndUpdate(cartId, { products: foundCart.products });
+    await cartModel.findByIdAndUpdate(cartId, {
+      products: existingProduct.products,
+    });
 
-    return foundCart;
+    return existingProduct;
   }
 }

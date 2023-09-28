@@ -10,7 +10,9 @@ import cartRouter from "./routes/cartRouter.js";
 import viewsRouter from "./routes/viewsRouter.js";
 import ProductManager from "./dao/filesystem/ProductManager.js";
 
-import { messageModel } from "./dao/models/message.mode.js";
+//import { messageModel } from "./dao/models/message.mode.js";
+import chatEvents from "./socket/chat.js";
+import productEvents from "./socket/products.js";
 
 //conexión a la base de datos de MongoDB (Mongo Atlas)
 mongoose.connect(
@@ -44,18 +46,5 @@ app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 
-// socketServer.on("connection", async (socket) => {
-//   console.log("Cliente conectado", socket.id);
-//   socket.emit("products", await productManager.getProducts());
-// });
-
-socketServer.on("connection", (socket) => {
-  console.log("Se conectó", socket.id);
-  socket.on("mensaje", async (data) => {
-    data.fecha = new Date();  // Agrega la fecha actual
-    await messageModel.create(data);
-    const messages = await messageModel.find().lean();
-    console.log(messages);
-    socketServer.emit("nuevo_mensaje", messages);
-  });
-});
+chatEvents(socketServer);
+productEvents(socketServer);

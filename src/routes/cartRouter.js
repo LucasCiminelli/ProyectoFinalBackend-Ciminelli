@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
     const carts = await cartManager.getCarts();
     res.json(carts);
   } catch (error) {
-    restart.status(500).json({ error: "Not found" });
+    res.status(500).json({ error: "Not found" });
   }
 });
 
@@ -44,14 +44,14 @@ router.post("/:cid/product/:pid", async (req, res) => {
 
     if (!findCart) {
       res.status(404).send("Carrito no encontrado");
-      return; 
+      return;
     }
 
     const findProd = await productManager.getProductsById(pid);
 
     if (!findProd) {
       res.status(404).send("Producto no encontrado");
-      return; 
+      return;
     }
 
     const addProdToCart = await cartManager.addProductToCart(

@@ -8,7 +8,9 @@ socket.on("products", (productos) => {
     return `<h2>${product.title}</h2>
     <p>${product.description}</p>
     <p>Precio: $${product.price}</p>
-    <p>Código: ${product.code}</p>`;
+    <p>Código: ${product.code}</p>
+    <button>Add to the cart</button>
+    `;
   });
   productsContainer.innerHTML = productsContent.join("<br/>");
 });
@@ -18,7 +20,8 @@ socket.on("update_products", (products) => {
     return `<h2>${product.title}</h2>
     <p>${product.description}</p>
     <p>Precio: $${product.price}</p>
-    <p>Código: ${product.code}</p>`;
+    <p>Código: ${product.code}</p>
+    <button>Add to the cart</button>`;
   });
   productsContainer.innerHTML = productsContent.join("<br/>");
 });
