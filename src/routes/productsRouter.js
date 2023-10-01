@@ -7,13 +7,31 @@ const productManager = new ProductManager();
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const limit = req.query.limit;
-  const products = await productManager.getProducts();
+  try {
+    const { limit, page, sort, query } = req.query;
 
-  if (limit) {
-    return res.send(products.slice(0, limit));
+    const modelLimit = limit ? parseInt(limit, 10) : 10;
+    const modelPage = page ? parseInt(page, 10) : 1;
+    const modelQuery = query ? JSON.parse(query) : {};
+
+    let sortOptions = {};
+
+    if (sort === "asc") {
+      sortOptions = { price: 1 };
+    } else if (sort === "des") {
+      sortOptions = { price: -1 };
+    }
+
+    const products = await productManager.getProducts(modelQuery, {
+      limit: modelLimit,
+      page: modelPage,
+      sort: sortOptions,
+    });
+
+    res.status(200).send(products);
+  } catch (error) {
+    res.status(500).send("Error");
   }
-  return res.send(products);
 });
 
 router.get("/:pid", async (req, res) => {

@@ -13,12 +13,15 @@ export default class CartManager {
   }
 
   async getCartsById(id) {
-    const foundCart = await cartModel.findOne({ _id: id });
+    const foundCart = await cartModel
+      .findOne({ _id: id })
+      .populate("products.product");
+
     if (!foundCart) {
       console.error("Error, Carrito no encontrado");
       return null;
     }
-    console.log(foundCart);
+    console.log(JSON.stringify(foundCart, null, 2));
     return foundCart;
   }
 
@@ -38,6 +41,8 @@ export default class CartManager {
       .findById({ _id: cartId })
       .populate("products.product")
       .lean();
+
+    console.log(existingProduct);
 
     if (existingProduct) {
       const productToUpdate = existingProduct.products.find(
@@ -72,5 +77,55 @@ export default class CartManager {
     });
 
     return existingProduct;
+  }
+
+  async deleteProductInCart(productId, cartId) {
+    try {
+      const cart = await this.getCartsById(cartId);
+      if (!cart) {
+        console.error("Carrito no encontrado");
+        return null;
+      }
+
+      const productsInCart = cart.products.filter(
+        (prod) => prod.product.toString() !== productId
+      );
+
+      if (productsInCart.length === cart.products.length) {
+        console.error("Producto no encontrado en el carrito");
+        return null;
+      }
+
+      await cartModel.findByIdAndUpdate(cartId, { products: productsInCart });
+      return cart;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  async updateProductsInCart(cartId, updatedProducts) {
+    try {
+      const findCart = await cartModel.findById(cartId);
+      if (!findCart) {
+        console.log("carrito no encontrado");
+        return null;
+      }
+
+      const updatedCart = await cartModel
+        .findByIdAndUpdate(
+          cartId,
+          {
+            products: updatedProducts,
+          },
+          { new: true }
+        )
+        .populate("products.product");
+
+      return updatedCart;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }

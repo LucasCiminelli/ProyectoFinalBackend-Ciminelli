@@ -1,8 +1,37 @@
 import { productModel } from "../models/product.model.js";
 
 export default class ProductManager {
-  async getProducts() {
-    const products = await productModel.find().lean();
+  async getProducts(query, options) {
+    const { page, limit, sort } = options;
+
+    const paginateOptions = {
+      page: page || 1,
+      limit: limit || 10,
+      sort: sort || {},
+      lean: true,
+    };
+
+    const result = await productModel.paginate(query || {}, paginateOptions);
+
+    const totalPages = result.totalPages;
+    const currentPage = result.page;
+    const hasNextPage = result.hasNextPage;
+    const hasPrevPage = result.hasPrevPage;
+    const prevLink = hasPrevPage ? `/products?page=${currentPage - 1}` : null;
+    const nextLink = hasNextPage ? `/products?page=${currentPage + 1}` : null;
+
+    const products = {
+      status: "sucess",
+      payload: result.docs,
+      totalPages: totalPages,
+      prevPage: currentPage - 1,
+      nextPage: currentPage + 1,
+      hasPrevPage: hasPrevPage,
+      hasNextPage: hasNextPage,
+      prevLink: prevLink,
+      nextLink: nextLink,
+    };
+
     return products;
   }
 

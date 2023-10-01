@@ -1,0 +1,24 @@
+<!-- products.handlebars -->
+<h1>PRODUCTOS</h1>
+
+<!-- Agregar enlace directo al carrito -->
+<a href="/carts/651592616f484725392faa6b">🛒</a>
+
+{{#each products.payload}}
+  <div>
+    <br />
+    {{this.title}}
+    <br />
+    {{this.description}}
+    <br />
+    Precio: ${{this.price}}
+    <br />
+    <button class="addToCartButton" data-product-id="{{this._id}}">Agregar al
+      carrito</button>
+    <br />
+    <br />
+  </div>
+{{/each}}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/products.js"></script>
