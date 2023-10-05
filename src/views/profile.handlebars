@@ -1,9 +1,9 @@
-<h1>hola {{first_name}} {{last_name}}</h1>
-
-{{email}}
-
-{{age}}
-
-Rol: {{rol}}
-<br />
-<button><a href="/logout">Logout</a> </button> 
+<div class="max-w-md mx-auto bg-white rounded p-8 mt-10">
+  <h1 class="text-2xl font-bold mb-4">Hola {{first_name}} {{last_name}}</h1>
+  <p class="mb-2">Email: {{email}}</p>
+  <p class="mb-2">Age: {{age}}</p>
+  <p class="mb-4">Rol: {{rol}}</p>
+  <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+    <a href="/logout">Logout</a>
+  </button>
+</div>

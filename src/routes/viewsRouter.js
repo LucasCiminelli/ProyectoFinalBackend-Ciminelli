@@ -43,7 +43,7 @@ router.get("/products", privateRoutes, async (req, res) => {
   }
 });
 
-router.get("/carts/:cid", async (req, res) => {
+router.get("/carts/:cid", privateRoutes, async (req, res) => {
   const cid = req.params.cid;
 
   try {
