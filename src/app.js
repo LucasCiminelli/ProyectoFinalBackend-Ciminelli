@@ -3,11 +3,14 @@ import express from "express";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
+import MongoStore from "connect-mongo";
+import session from "express-session";
 
 // import de routers y managers
 import productsRouter from "./routes/productsRouter.js";
 import cartRouter from "./routes/cartRouter.js";
 import viewsRouter from "./routes/viewsRouter.js";
+import userRouter from "./routes/userRouter.js";
 import ProductManager from "./dao/filesystem/ProductManager.js";
 
 //import { messageModel } from "./dao/models/message.mode.js";
@@ -30,6 +33,19 @@ const socketServer = new Server(httpServer);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl:
+        "mongodb+srv://lucasaciminelli:E6dS5N0gwUm3VgLw@cluster0.0ozvnjh.mongodb.net/?retryWrites=true&w=majority",
+      ttl: 15,
+    }),
+    secret: "asd123",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
 //Configuración de Handlebars
 app.engine("handlebars", handlebars.engine());
 app.set("views", "./src/views");
@@ -43,6 +59,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/", viewsRouter);
+app.use("/api", userRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 
