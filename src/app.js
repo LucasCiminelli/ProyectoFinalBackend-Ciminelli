@@ -12,6 +12,8 @@ import cartRouter from "./routes/cartRouter.js";
 import viewsRouter from "./routes/viewsRouter.js";
 import userRouter from "./routes/userRouter.js";
 import ProductManager from "./dao/filesystem/ProductManager.js";
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
 
 //import { messageModel } from "./dao/models/message.mode.js";
 import chatEvents from "./socket/chat.js";
@@ -65,3 +67,6 @@ app.use("/api/carts", cartRouter);
 
 chatEvents(socketServer);
 productEvents(socketServer);
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());

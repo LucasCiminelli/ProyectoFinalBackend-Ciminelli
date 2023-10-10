@@ -1,76 +1,41 @@
 import { Router } from "express";
 import { userModel } from "../dao/models/user.model.js";
 import bcrypt from "bcrypt";
+import passport from "passport";
 
 const router = Router();
 
-router.post("/signup", async (req, res) => {
-  if (req.session.isLogged) {
-    return res.redirect("/profile");
+router.post(
+  "/signup",
+  passport.authenticate("register", { failureRedirect: "/failregister" }),
+  async (req, res) => {
+    return res.redirect("/login");
   }
+);
 
-  const { first_name, last_name, email, age, password } = req.body;
+router.post(
+  "/login",
+  passport.authenticate("login", { failureRedirect: "/login" }),
+  async (req, res) => {
+    req.session.first_name = req.user.first_name;
+    req.session.last_name = req.user.last_name;
+    req.session.email = req.user.email;
+    req.session.age = req.user.age;
+    req.session.isLogged = true;
 
-  const userExists = await userModel.findOne({ email });
+    if (
+      req.user.email === "adminCoder@coder.com" &&
+      req.body.password === "adminCod3r123"
+    ) {
+      req.session.rol = "Admin";
+      return res.redirect("/products");
+    } else {
+      req.session.rol = "Usuario";
+    }
 
-  if (userExists) {
-    return res.send("Ya estás registrado");
+    res.redirect("/products");
   }
-
-  const user = await userModel.create({
-    first_name,
-    last_name,
-    email,
-    age,
-    password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
-  });
-
-  req.session.first_name = user.first_name;
-  req.session.last_name = user.last_name;
-  req.session.email = user.email;
-  req.session.age = user.age;
-  req.session.isLogged = true;
-
-  res.redirect("/profile");
-});
-
-router.post("/login", async (req, res) => {
-  if (req.session.isLogged) {
-    return res.redirect("/profile");
-  }
-
-  const { email, password } = req.body;
-
-  const user = await userModel.findOne({ email }).lean();
-
-  if (!user) {
-    return res.send(
-      "El correo o contraseña ingresada no corresponde con nuestros registros"
-    );
-  }
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-
-  if (!isPasswordValid) {
-    return res.send(
-      "El correo o contraseña ingresada no corresponde con nuestros registros"
-    );
-  }
-
-  req.session.first_name = user.first_name;
-  req.session.last_name = user.last_name;
-  req.session.email = user.email;
-  req.session.age = user.age;
-  req.session.isLogged = true;
-
-  if (user.email === "adminCoder@coder.com" && password === "adminCod3r123") {
-    req.session.rol = "Admin";
-    return res.redirect("/products");
-  } else {
-    req.session.rol = "Usuario";
-  }
-
-  res.redirect("/products");
-});
+);
 
 router.post("/recover", async (req, res) => {
   const { email, password } = req.body;
@@ -88,5 +53,36 @@ router.post("/recover", async (req, res) => {
 
   res.redirect("/login");
 });
+
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
+
+router.get(
+  "/githubcallback",
+  passport.authenticate("github", {
+    failureRedirect: "/login",
+  }),
+  (req, res) => {
+    req.session.first_name = req.user.first_name;
+    req.session.last_name = req.user.last_name;
+    req.session.email = req.user.email;
+    req.session.age = req.user.age;
+    req.session.isLogged = true;
+
+    if (
+      req.user.email === "adminCoder@coder.com" &&
+      req.body.password === "adminCod3r123"
+    ) {
+      req.session.rol = "Admin";
+      return res.redirect("/products");
+    } else {
+      req.session.rol = "Usuario";
+    }
+
+    res.redirect("/profile");
+  }
+);
 
 export default router;
