@@ -14,6 +14,8 @@ import userRouter from "./routes/userRouter.js";
 import ProductManager from "./dao/filesystem/ProductManager.js";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
+import sessionsRouter from "./routes/sessionsRouter.js";
+import cookieParser from "cookie-parser";
 
 //import { messageModel } from "./dao/models/message.mode.js";
 import chatEvents from "./socket/chat.js";
@@ -60,6 +62,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(passport.session());
+app.use(cookieParser());
+initializePassport();
+app.use(passport.initialize());
+
+
 app.use("/", viewsRouter);
 app.use("/api", userRouter);
 app.use("/api/products", productsRouter);
@@ -67,6 +75,3 @@ app.use("/api/carts", cartRouter);
 
 chatEvents(socketServer);
 productEvents(socketServer);
-initializePassport();
-app.use(passport.initialize());
-app.use(passport.session());

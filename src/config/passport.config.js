@@ -3,6 +3,9 @@ import LocalStrategy from "passport-local";
 import bcrypt from "bcrypt";
 import { userModel } from "../dao/models/user.model.js";
 import GithubStrategy from "passport-github2";
+import jwt from "passport-jwt";
+import { JWT_PRIVATE_KEY } from "./constans.config.js";
+import cookieExtractor from "../helpers/cookieExtractor.js";
 
 const initializePassport = () => {
   passport.use(
@@ -90,6 +93,34 @@ const initializePassport = () => {
       }
     )
   );
+
+  const JWTStrategy = jwt.Strategy;
+  const ExtractJWT = jwt.ExtractJwt;
+
+  passport.use(
+    "jwt",
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: JWT_PRIVATE_KEY,
+      },
+      async (jwt_payload, done) => {
+        try {
+          const user = await userModel.findById(jwt_payload.userId).lean();
+          console.log(user);
+  
+          if (!user) {
+            return done(null, false);
+          }
+          console.log(JWT_PRIVATE_KEY);
+          return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+  
 
   passport.serializeUser((user, done) => {
     done(null, user._id);

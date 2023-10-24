@@ -77,7 +77,6 @@ router.get("/signup", publicRoutes, (req, res) => {
 router.get("/profile", privateRoutes, (req, res) => {
   const { first_name, last_name, email, age, rol } = req.session;
 
-
   res.render("profile", { first_name, last_name, email, age, rol });
 });
 
@@ -88,6 +87,10 @@ router.get("/logout", (req, res) => {
 
 router.get("/recover", publicRoutes, (req, res) => {
   res.render("recover");
+});
+
+router.get("/loginJwt", publicRoutes, (req, res) => {
+  res.render("loginJwt");
 });
 
 export default router;
