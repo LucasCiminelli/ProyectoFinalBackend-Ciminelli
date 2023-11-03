@@ -33,7 +33,7 @@ export const loginLocal = async (req, res) => {
 export const recoverLocal = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userManager.getUsersByEmail();
+  const user = await userManager.getUsersByEmail(email);
 
   if (!user) {
     return res.send(
@@ -70,7 +70,7 @@ export const githubLogin = (req, res) => {
 export const loginJwt = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userManager.getUsersByEmail();
+  const user = await userManager.getUsersByEmail(email);
 
   console.log(user);
 

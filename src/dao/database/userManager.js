@@ -1,7 +1,7 @@
 import { userModel } from "../models/user.model.js";
 
 export default class userManager {
-  async getUsersByEmail() {
+  async getUsersByEmail(email) {
     try {
       const user = await userModel.findOne({ email }).lean();
       if (!user) {
@@ -9,7 +9,6 @@ export default class userManager {
         return;
       }
       return user;
-      
     } catch (error) {
       console.log(error);
     }

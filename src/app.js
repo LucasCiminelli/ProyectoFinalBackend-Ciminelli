@@ -12,7 +12,6 @@ import productsRouter from "./routes/productsRouter.js";
 import cartRouter from "./routes/cartRouter.js";
 import viewsRouter from "./routes/viewsRouter.js";
 import userRouter from "./routes/userRouter.js";
-import ProductManager from "./dao/filesystem/ProductManager.js";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
