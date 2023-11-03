@@ -4,8 +4,11 @@ import bcrypt from "bcrypt";
 import { userModel } from "../dao/models/user.model.js";
 import GithubStrategy from "passport-github2";
 import jwt from "passport-jwt";
-import { JWT_PRIVATE_KEY } from "./constans.config.js";
+// import { JWT_PRIVATE_KEY } from "./constans.config.js";
 import cookieExtractor from "../helpers/cookieExtractor.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const initializePassport = () => {
   passport.use(
@@ -65,10 +68,10 @@ const initializePassport = () => {
     "github",
     new GithubStrategy(
       {
-        clientID: "Iv1.1bf5e052da746fdc",
-        clientSecret: "88f50d5126ba48e56cdcc83d9f1eb31aa88b1b1b",
-        callbackURL: "http://localhost:8080/api/githubcallback",
-        scope: ["user:email"],
+        clientID: process.env.GITHUB_CLIENT,
+        clientSecret: process.env.CLIENT_SECRET,
+        callbackURL: process.env.CALLBACK_URL,
+        scope: process.env.GITHUB_SCOPE.split(","),
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -102,7 +105,7 @@ const initializePassport = () => {
     new JWTStrategy(
       {
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: JWT_PRIVATE_KEY,
+        secretOrKey: process.env.JWT_PRIVATE_KEY,
       },
       async (jwt_payload, done) => {
         try {
@@ -112,7 +115,7 @@ const initializePassport = () => {
           if (!user) {
             return done(null, false);
           }
-          console.log(JWT_PRIVATE_KEY);
+          console.log(process.env.JWT_PRIVATE_KEY);
           return done(null, user);
         } catch (error) {
           return done(error);

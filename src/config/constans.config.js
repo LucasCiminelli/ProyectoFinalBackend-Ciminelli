@@ -1,1 +1,1 @@
-export const JWT_PRIVATE_KEY = "asdjl1290klñkoKUXsgfd";
+// export const JWT_PRIVATE_KEY = "asdjl1290klñkoKUXsgfd";

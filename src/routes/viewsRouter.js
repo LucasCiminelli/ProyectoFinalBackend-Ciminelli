@@ -1,11 +1,9 @@
 import { Router } from "express";
 import ProductManager from "../dao/database/productManager.js";
-import { productModel } from "../dao/models/product.model.js";
-import { cartModel } from "../dao/models/cart.model.js";
 import CartManager from "../dao/database/cartManager.js";
 import publicRoutes from "../middlewares/publicRoutes.js";
 import privateRoutes from "../middlewares/privateRoutes.js";
-import bcrypt from "bcrypt";
+
 
 const productManager = new ProductManager();
 const cartManager = new CartManager();

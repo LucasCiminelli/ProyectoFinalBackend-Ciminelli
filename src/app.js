@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import session from "express-session";
+import dotenv from "dotenv";
 
 // import de routers y managers
 import productsRouter from "./routes/productsRouter.js";
@@ -14,24 +15,24 @@ import userRouter from "./routes/userRouter.js";
 import ProductManager from "./dao/filesystem/ProductManager.js";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
-import sessionsRouter from "./routes/sessionsRouter.js";
+
 import cookieParser from "cookie-parser";
 
 //import { messageModel } from "./dao/models/message.mode.js";
 import chatEvents from "./socket/chat.js";
 import productEvents from "./socket/products.js";
 
-//conexión a la base de datos de MongoDB (Mongo Atlas)
-mongoose.connect(
-  "mongodb+srv://lucasaciminelli:E6dS5N0gwUm3VgLw@cluster0.0ozvnjh.mongodb.net/?retryWrites=true&w=majority"
-);
+dotenv.config();
 
-//creando nueva instancia de productManager
-const productManager = new ProductManager();
+//conexión a la base de datos de MongoDB (Mongo Atlas)
+mongoose.connect(process.env.URL_MONGO);
+
 
 //inicialización del servidor express y configurando servidor de web sockets
 const app = express();
-const httpServer = app.listen(8080, () => console.log("tuki"));
+const PORT = process.env.EXPRESS_PORT;
+
+const httpServer = app.listen(PORT, () => console.log("tuki"));
 const socketServer = new Server(httpServer);
 
 app.use(express.json());
@@ -40,11 +41,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     store: MongoStore.create({
-      mongoUrl:
-        "mongodb+srv://lucasaciminelli:E6dS5N0gwUm3VgLw@cluster0.0ozvnjh.mongodb.net/?retryWrites=true&w=majority",
+      mongoUrl: process.env.URL_MONGO,
       ttl: 15,
     }),
-    secret: "asd123",
+    secret: process.env.SECRET_MONGO,
     resave: false,
     saveUninitialized: false,
   })
@@ -66,7 +66,6 @@ app.use(passport.session());
 app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
-
 
 app.use("/", viewsRouter);
 app.use("/api", userRouter);
