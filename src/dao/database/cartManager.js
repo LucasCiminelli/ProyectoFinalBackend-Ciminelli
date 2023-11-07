@@ -15,7 +15,8 @@ export default class CartManager {
   async getCartsById(id) {
     const foundCart = await cartModel
       .findOne({ _id: id })
-      .populate("products.product");
+      .populate("products.product")
+      .lean();
 
     if (!foundCart) {
       console.error("Error, Carrito no encontrado");
@@ -88,8 +89,11 @@ export default class CartManager {
       }
 
       const productsInCart = cart.products.filter(
-        (prod) => prod.product.toString() !== productId
+        (prod) => prod.product._id.toString() !== productId
       );
+      console.log("productos", productsInCart);
+      console.log("productId:", productId);
+      console.log("Products in Cart:", cart.products);
 
       if (productsInCart.length === cart.products.length) {
         console.error("Producto no encontrado en el carrito");

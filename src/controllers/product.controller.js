@@ -1,7 +1,7 @@
-import ProductManager from "../dao/database/productManager.js";
+import ProductService from "../services/product.service.js";
 
+const productService = new ProductService();
 
-const productManager = new ProductManager();
 
 export const getProducts = async (req, res) => {
   try {
@@ -19,7 +19,7 @@ export const getProducts = async (req, res) => {
       sortOptions = { price: -1 };
     }
 
-    const products = await productManager.getProducts(modelQuery, {
+    const products = await productService.getProducts(modelQuery, {
       limit: modelLimit,
       page: modelPage,
       sort: sortOptions,
@@ -33,7 +33,7 @@ export const getProducts = async (req, res) => {
 
 export const getProductsById = async (req, res) => {
   const productId = req.params.pid;
-  const product = await productManager.getProductsById(productId);
+  const product = await productService.getProductsById(productId);
 
   if (product === undefined) {
     return res.status(404).send();
@@ -58,8 +58,8 @@ export const createProduct = async (req, res) => {
       return res.status(400).send("Faltan completar campos obligatorios");
     }
 
-    await productManager.addProduct({ ...product, status: true });
-    const products = await productManager.getProducts();
+    await productService.addProduct({ ...product, status: true });
+    const products = await productService.getProducts();
     req.context.socketServer.emit("update_products", products);
 
     res.status(200).json(product);
@@ -73,11 +73,11 @@ export const updateProduct = async (req, res) => {
   const id = req.params.pid;
   const prodActualizado = req.body;
 
-  const updatedProduct = await productManager.updateProduct(
+  const updatedProduct = await productService.updateProduct(
     id,
     prodActualizado
   );
-  const products = await productManager.getProducts();
+  const products = await productService.getProducts();
   req.context.socketServer.emit("update_products", products);
 
   if (updatedProduct) {
@@ -90,8 +90,8 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   const prodId = req.params.pid;
 
-  const deletedProduct = await productManager.deleteProduct(prodId);
-  const products = await productManager.getProducts();
+  const deletedProduct = await productService.deleteProduct(prodId);
+  const products = await productService.getProducts();
   req.context.socketServer.emit("update_products", products);
 
   if (deletedProduct) {

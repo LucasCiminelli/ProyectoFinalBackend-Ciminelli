@@ -10,7 +10,7 @@ export default class userManager {
       }
       return user;
     } catch (error) {
-      console.log(error);
+      throw new Error("Error en capa de servicio", error);
     }
   }
 }

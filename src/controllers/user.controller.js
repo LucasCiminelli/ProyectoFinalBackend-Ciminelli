@@ -1,10 +1,11 @@
-import UserManager from "../dao/database/userManager.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import UserService from "../services/user.service.js";
 
 dotenv.config();
-const userManager = new UserManager();
+
+const userService = new UserService()
 
 export const signupLocal = async (req, res) => {
   return res.redirect("/login");
@@ -33,7 +34,7 @@ export const loginLocal = async (req, res) => {
 export const recoverLocal = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userManager.getUsersByEmail(email);
+  const user = await userService.getUsersByEmail(email);
 
   if (!user) {
     return res.send(
@@ -70,7 +71,7 @@ export const githubLogin = (req, res) => {
 export const loginJwt = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userManager.getUsersByEmail(email);
+  const user = await userService.getUsersByEmail(email);
 
   console.log(user);
 
