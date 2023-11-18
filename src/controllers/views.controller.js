@@ -1,8 +1,10 @@
 import ProductManager from "../dao/database/productManager.js";
 import CartManager from "../dao/database/cartManager.js";
+import UserManager from "../dao/database/userManager.js";
 
 const productManager = new ProductManager();
 const cartManager = new CartManager();
+const userManager = new UserManager();
 
 export const renderHome = async (req, res) => {
   const products = await productManager.getProducts();
@@ -17,6 +19,8 @@ export const renderChat = (req, res) => {
   res.render("chat", {});
 };
 
+// En viewsController.js
+
 export const renderProducts = async (req, res) => {
   try {
     const options = {
@@ -27,9 +31,21 @@ export const renderProducts = async (req, res) => {
 
     const { first_name, last_name, email, age } = req.session;
 
-    const products = await productManager.getProducts({}, options);
+    const user = await userManager.getUsersByEmail(email);
 
-    res.render("products", { first_name, last_name, products });
+    if (!user || !user.cart || !user.cart._id) {
+      res.status(404).send("Usuario o carrito no encontrado");
+      return;
+    }
+    console.log("el usuario completo es:", user);
+
+    const cartId = user.cart._id.toString();
+    const rol = req.session.rol;
+
+    // Obtener productos y enviar cartId a la vista
+    const products = await productManager.getProducts({}, options);
+    console.log("cartId en el contexto de Handlebars:", cartId);
+    res.render("products", { first_name, last_name, products, cartId, rol });
   } catch (error) {
     console.error("Error al obtener y renderizar productos:", error);
     res.status(500).send("Error interno del servidor");
@@ -37,10 +53,21 @@ export const renderProducts = async (req, res) => {
 };
 
 export const renderCart = async (req, res) => {
-  const cid = req.params.cid;
+  console.log("la sesion es:", req.session);
+  console.log("el user es:", req.user);
 
   try {
-    const cart = await cartManager.getCartsById(cid);
+    const userEmail = req.user.email;
+    const user = await userManager.getUsersByEmail(userEmail);
+
+    if (!user || !user.cart || !user.cart._id) {
+      res.status(404).send("Usuario o carrito no encontrado");
+      return;
+    }
+
+    const cartId = user.cart._id;
+    const cid = cartId; // Asignas el valor de cartId a cid
+    const cart = await cartManager.getCartsById(cartId);
 
     if (!cart) {
       res.status(404).send("Carrito no encontrado");
@@ -52,7 +79,7 @@ export const renderCart = async (req, res) => {
       quantity: prod.quantity,
     }));
 
-    res.render("cart", { products: cartProducts });
+    res.render("cart", { products: cartProducts, cid });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error interno del servidor");

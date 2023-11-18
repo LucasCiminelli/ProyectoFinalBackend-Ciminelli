@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { isUser } from "../middlewares/currentAuth.js";
 
 import {
   getCarts,
@@ -17,7 +18,7 @@ const router = Router();
 router.get("/", getCarts);
 router.post("/", createCart);
 router.get("/:cid", getCartsById);
-router.post("/:cid/product/:pid", addProductToCart);
+router.post("/:cid/product/:pid",isUser, addProductToCart);
 router.delete("/:cid/product/:pid", deleteProductInCart);
 router.put("/:cid", updateProductsInCart);
 router.put("/:cid/product/:pid", updateQuantityProdInCart);

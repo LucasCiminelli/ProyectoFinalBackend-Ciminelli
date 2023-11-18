@@ -1,18 +1,19 @@
 // products.js
-const addToCartButtons = document.querySelectorAll(".addToCartButton");
-
-const addProductToCart = async (productId, quantity) => {
+const addProductToCart = async (cartId, productId, quantity) => {
+  
   try {
-    const response = await fetch(
-      `/api/carts/651592616f484725392faa6b/product/${productId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ quantity }),
-      }
-    );
+    if (!cartId) {
+      console.error("Error: cartId no válido");
+      return;
+    }
+
+    const response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ quantity }),
+    });
 
     if (!response.ok) {
       throw new Error("Error al agregar producto al carrito");
@@ -24,13 +25,36 @@ const addProductToCart = async (productId, quantity) => {
   }
 };
 
+// products.js
+
+// products.js
+const addToCartButtons = document.querySelectorAll(".addToCartButton");
+
 addToCartButtons.forEach((button) => {
+  const cartId = document
+    .querySelector(".max-w-3xl")
+    .getAttribute("data-cart-id");
+  const userRole = document
+    .querySelector(".max-w-3xl")
+    .getAttribute("data-user-role");
+
   button.addEventListener("click", async () => {
     const productId = button.getAttribute("data-product-id");
     const quantity = 1;
+    if (userRole === "Admin") {
+      console.log("Usuario es un administrador. No se puede agregar al carrito.");
+      Swal.fire({
+        title: "Usuario es un administrador. No se puede agregar al carrito.",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      return;
+      }
 
     try {
-      await addProductToCart(productId, quantity);
+      await addProductToCart(cartId, productId, quantity);
+      console.log("Producto añadido al carrito correctamente");
       Swal.fire({
         title: "Producto añadido al carrito",
         icon: "success",
@@ -38,7 +62,7 @@ addToCartButtons.forEach((button) => {
         timer: 1500,
       });
     } catch (error) {
-      console.error(error);
+      console.error("Error al agregar producto al carrito:", error);
     }
   });
 });

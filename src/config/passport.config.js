@@ -2,6 +2,7 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 import bcrypt from "bcrypt";
 import { userModel } from "../dao/models/user.model.js";
+import CartManager from "../dao/database/cartManager.js";
 import GithubStrategy from "passport-github2";
 import jwt from "passport-jwt";
 // import { JWT_PRIVATE_KEY } from "./constans.config.js";
@@ -9,6 +10,8 @@ import cookieExtractor from "../helpers/cookieExtractor.js";
 import dotenv from "dotenv";
 
 dotenv.config();
+
+const cartManager = new CartManager()
 
 const initializePassport = () => {
   passport.use(
@@ -30,6 +33,12 @@ const initializePassport = () => {
             email: username,
             password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
           });
+
+          const cart = await cartManager.createCart();
+
+          user.cart = cart._id;
+
+          await user.save();
 
           console.log(user);
 
@@ -111,7 +120,7 @@ const initializePassport = () => {
         try {
           const user = await userModel.findById(jwt_payload.userId).lean();
           console.log(user);
-  
+
           if (!user) {
             return done(null, false);
           }
@@ -123,7 +132,6 @@ const initializePassport = () => {
       }
     )
   );
-  
 
   passport.serializeUser((user, done) => {
     done(null, user._id);

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { uploader } from "../middlewares/multer.js";
+import { isAdmin } from "../middlewares/currentAuth.js";
 
 import {
   getProducts,
@@ -14,9 +15,9 @@ const router = Router();
 
 router.get("/", getProducts);
 router.get("/:pid", getProductsById);
-router.post("/", uploader.single("file"), createProduct);
-router.put("/:pid", updateProduct);
-router.delete("/:pid", deleteProduct);
+router.post("/",isAdmin, uploader.single("file"), createProduct);
+router.put("/:pid",isAdmin, updateProduct);
+router.delete("/:pid",isAdmin, deleteProduct);
 
 
 export default router;
