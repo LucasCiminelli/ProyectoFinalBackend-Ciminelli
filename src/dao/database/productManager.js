@@ -1,4 +1,5 @@
 import { productModel } from "../models/product.model.js";
+import { fakerES as faker } from "@faker-js/faker";
 
 export default class ProductManager {
   async getProducts(query, options) {
@@ -113,5 +114,26 @@ export default class ProductManager {
       return repetido;
     }
     return undefined;
+  }
+
+  getProductsMocks() {
+    const products = [];
+    for (let i = 0; i < 101; i++) {
+      const product = {
+        title: faker.commerce.product(),
+        description: faker.commerce.productDescription(),
+        code: faker.string.uuid(),
+        price: faker.commerce.price(),
+        stock: faker.string.numeric(),
+        category: faker.commerce.productMaterial(),
+        thumbnails: faker.helpers.shuffle([
+          "thumbnail1",
+          "thumbnail2",
+          "thumbnail3",
+        ]),
+      };
+      products.push(product);
+    }
+    return products;
   }
 }

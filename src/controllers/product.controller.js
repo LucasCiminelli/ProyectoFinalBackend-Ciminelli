@@ -2,7 +2,6 @@ import ProductService from "../services/product.service.js";
 
 const productService = new ProductService();
 
-
 export const getProducts = async (req, res) => {
   try {
     const { limit, page, sort, query } = req.query;
@@ -98,5 +97,13 @@ export const deleteProduct = async (req, res) => {
     res.status(200).send(`Producto Eliminado Correctamente.`);
   } else {
     res.status(404).send("Producto no encontrado");
+  }
+};
+export const getProductsMocks = (req, res) => {
+  const products = productService.getProductsMocks();
+  if (products) {
+    res.json(products);
+  } else {
+    res.status(404).send("productos no encontrados");
   }
 };

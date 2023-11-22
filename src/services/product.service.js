@@ -21,7 +21,6 @@ export default class ProductService {
 
   async createProduct(product) {
     try {
-     
       return await productManager.addProduct(product);
     } catch (error) {
       throw new Error("Error en capa de Servicio", error);
@@ -39,6 +38,14 @@ export default class ProductService {
   async deleteProduct(id) {
     try {
       return await productManager.deleteProduct(id);
+    } catch (error) {
+      throw new Error("Error en capa de Servicio", error);
+    }
+  }
+
+  getProductsMocks() {
+    try {
+      return productManager.getProductsMocks();
     } catch (error) {
       throw new Error("Error en capa de Servicio", error);
     }

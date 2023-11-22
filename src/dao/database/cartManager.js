@@ -132,4 +132,8 @@ export default class CartManager {
       return null;
     }
   }
+
+  async endPurchase(){
+    
+  }
 }

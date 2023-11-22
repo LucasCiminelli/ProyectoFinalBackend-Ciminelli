@@ -30,5 +30,8 @@
     "socket.io": "^4.7.2",
     "tailwind": "^4.0.0",
     "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.3.1"
   }
 }
