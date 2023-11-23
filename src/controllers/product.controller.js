@@ -1,4 +1,7 @@
 import ProductService from "../services/product.service.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 
 const productService = new ProductService();
 
@@ -54,7 +57,12 @@ export const createProduct = async (req, res) => {
       !product.category ||
       !product.thumbnails
     ) {
-      return res.status(400).send("Faltan completar campos obligatorios");
+      CustomError.createError({
+        name: "Product creation error",
+        cause: generateProductErrorInfo(product),
+        message: "Error trying to create product",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
     }
 
     await productService.addProduct({ ...product, status: true });

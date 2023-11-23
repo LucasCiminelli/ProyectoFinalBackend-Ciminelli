@@ -16,7 +16,7 @@ const router = Router();
 router.get("/", getProducts);
 router.get("/mockingproducts", getProductsMocks);
 router.get("/:pid", getProductsById);
-router.post("/", isAdmin, uploader.single("file"), createProduct);
+router.post("/",  uploader.single("file"), createProduct);
 router.put("/:pid", isAdmin, updateProduct);
 router.delete("/:pid", isAdmin, deleteProduct);
 
