@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { isUser } from "../middlewares/currentAuth.js";
+import { addLogger } from "../utils/logger.js";
 
 import {
   getCarts,
@@ -14,6 +15,8 @@ import {
 
 const router = Router();
 
+router.use(addLogger);
+
 router.get("/", getCarts);
 router.post("/", createCart);
 router.get("/:cid", getCartsById);
@@ -22,6 +25,6 @@ router.delete("/:cid/product/:pid", deleteProductInCart);
 router.put("/:cid", updateProductsInCart);
 router.put("/:cid/product/:pid", updateQuantityProdInCart);
 router.delete("/:cid", deleteCart);
-router.post("/:cid/purchase",);
+router.post("/:cid/purchase");
 
 export default router;

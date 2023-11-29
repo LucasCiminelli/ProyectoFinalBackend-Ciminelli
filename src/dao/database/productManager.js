@@ -1,5 +1,6 @@
 import { productModel } from "../models/product.model.js";
 import { fakerES as faker } from "@faker-js/faker";
+import { logger } from "../../utils/logger.js";
 
 export default class ProductManager {
   async getProducts(query, options) {
@@ -43,25 +44,27 @@ export default class ProductManager {
       });
 
       if (existingProduct) {
-        console.error("Producto existente en la base de datos");
+        logger.error("Producto existente en la base de datos");
         return null;
       }
 
       const finalProduct = await productModel.create(newProduct);
-      console.log("Producto agregado correctamente:", finalProduct);
+      logger.info("Producto agregado correctamente:", finalProduct);
 
       return finalProduct;
     } catch (error) {
-      console.error(error, "error al agregar el producto");
+      logger.error(error, "error al agregar el producto");
     }
   }
   async getProductsById(id) {
     const foundProduct = await productModel.find({ _id: id }).lean();
 
     if (!foundProduct) {
-      console.error("Error, Producto no encontrado");
+      logger.error("Error, Producto no encontrado");
       return;
     }
+
+    logger.info(foundProduct);
     return foundProduct;
   }
 
@@ -74,14 +77,14 @@ export default class ProductManager {
         .lean();
 
       if (!foundProductToDelete) {
-        console.error("Error, Producto no encontrado");
+        logger.error("Error, Producto no encontrado");
         return null;
       }
 
-      console.log(`Producto con id: ${id} eliminado.`);
+      logger.info(`Producto con id: ${id} eliminado.`);
       return foundProductToDelete;
     } catch (error) {
-      console.error("Error al eliminar el producto:", error);
+      logger.error("Error al eliminar el producto:", error);
       return null;
     }
   }
@@ -95,14 +98,14 @@ export default class ProductManager {
       );
 
       if (!findProductToUpdate) {
-        console.error("Producto no encontrado");
+        logger.error("Producto no encontrado");
         return null;
       } else {
-        console.log(`producto con id ${id} actualizado`);
+        logger.info(`producto con id ${id} actualizado`);
         return findProductToUpdate;
       }
     } catch (error) {
-      console.error(error, "Error al actualizar el producto");
+      logger.error(error, "Error al actualizar el producto");
       return null;
     }
   }
@@ -110,7 +113,7 @@ export default class ProductManager {
   async getProductRepetido(code) {
     const repetido = await productModel.findOne({ code: code });
     if (repetido) {
-      console.log("Producto repetido", repetido);
+      logger.info("Producto repetido", repetido);
       return repetido;
     }
     return undefined;

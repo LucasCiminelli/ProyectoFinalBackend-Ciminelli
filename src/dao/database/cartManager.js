@@ -1,14 +1,18 @@
 import { cartModel } from "../models/cart.model.js";
 import { productModel } from "../models/product.model.js";
+import { logger } from "../../utils/logger.js";
+import { errors } from "../../middlewares/errors.js";
 
 export default class CartManager {
   async getCarts() {
     const carts = await cartModel.find().lean();
+    logger.info("Carritos obtenidos correctamente en la base de datos");
     return carts;
   }
 
   async createCart(cart) {
     const newCart = await cartModel.create(cart);
+    logger.info("Carrito creado correctamente en la base de datos");
     return newCart;
   }
 
@@ -19,10 +23,10 @@ export default class CartManager {
       .lean();
 
     if (!foundCart) {
-      console.error("Error, Carrito no encontrado");
+      logger.error("Error, Carrito no encontrado en la base de datos");
       return null;
     }
-    console.log(JSON.stringify(foundCart, null, 2));
+    logger.info("carrito encontrado", foundCart);
     return foundCart;
   }
 
@@ -30,7 +34,7 @@ export default class CartManager {
     const foundCart = await this.getCartsById(cartId);
 
     if (!foundCart) {
-      console.error("Error, carrito no encontrado");
+      logger.error("Error, carrito no encontrado");
       return null;
     }
 
@@ -43,7 +47,7 @@ export default class CartManager {
       .populate("products.product")
       .lean();
 
-    console.log(existingProduct);
+    logger.info(existingProduct);
 
     if (existingProduct) {
       const productToUpdate = existingProduct.products.find(
@@ -52,7 +56,7 @@ export default class CartManager {
 
       if (productToUpdate) {
         productToUpdate.quantity += quantity;
-        console.log(productToUpdate);
+        logger.info(productToUpdate);
       } else {
         const productToAdd = await productModel.findOne({ _id: prodId }).lean();
 
@@ -62,14 +66,14 @@ export default class CartManager {
             quantity: quantity,
           });
         } else {
-          console.error(
+          logger.error(
             "Error, producto no encontrado en el carrito ni en la base de datos"
           );
           return null;
         }
       }
     } else {
-      console.error("Error, carrito no encontrado");
+      logger.error("Error, carrito no encontrado");
       return null;
     }
 
@@ -84,26 +88,26 @@ export default class CartManager {
     try {
       const cart = await this.getCartsById(cartId);
       if (!cart) {
-        console.error("Carrito no encontrado");
+        logger.error("Carrito no encontrado");
         return null;
       }
 
       const productsInCart = cart.products.filter(
         (prod) => prod.product._id.toString() !== productId
       );
-      console.log("productos", productsInCart);
-      console.log("productId:", productId);
-      console.log("Products in Cart:", cart.products);
+      logger.info("productos", productsInCart);
+      logger.info("productId:", productId);
+      logger.info("Products in Cart:", cart.products);
 
       if (productsInCart.length === cart.products.length) {
-        console.error("Producto no encontrado en el carrito");
+        logger.error("Producto no encontrado en el carrito");
         return null;
       }
 
       await cartModel.findByIdAndUpdate(cartId, { products: productsInCart });
       return cart;
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return null;
     }
   }
@@ -112,7 +116,7 @@ export default class CartManager {
     try {
       const findCart = await cartModel.findById(cartId);
       if (!findCart) {
-        console.log("carrito no encontrado");
+        logger.error("carrito no encontrado");
         return null;
       }
 
@@ -128,12 +132,10 @@ export default class CartManager {
 
       return updatedCart;
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return null;
     }
   }
 
-  async endPurchase(){
-    
-  }
+  async endPurchase() {}
 }
