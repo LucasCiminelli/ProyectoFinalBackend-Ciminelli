@@ -1,5 +1,8 @@
 import ProductManager from "../dao/database/productManager.js";
 import CartService from "../services/cart.service.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import { generateCartErrorInfo } from "../services/errors/info.js";
 
 const cartService = new CartService();
 const productManager = new ProductManager();
@@ -15,12 +18,23 @@ export const getCarts = async (req, res) => {
 
 export const getCartsById = async (req, res) => {
   const id = req.params.cid;
-  const findCartId = await cartService.getCartsById(id);
 
-  if (!findCartId) {
-    res.status(404).send("Carrito no encontrdo");
-  } else {
-    res.status(200).send(findCartId);
+  try {
+    const findCartId = await cartService.getCartsById(id);
+
+    if (!findCartId) {
+      CustomError.createError({
+        name: "Cart not found",
+        cause: generateCartErrorInfo(id),
+        message: "Error trying to find cart",
+        code: EErrors.DATABASE_ERROR,
+      });
+    } 
+      return res.status(200).send(findCartId);
+      
+  } catch (error) {
+    console.error("Error al obtener el carrito:", error);
+    res.status(500).send("Error al obtener el carrito");
   }
 };
 
@@ -77,12 +91,11 @@ export const deleteProductInCart = async (req, res) => {
     const pid = req.params.pid;
 
     const deleteProductInCart = await cartService.deleteProductInCart(pid, cid);
-    
 
     if (deleteProductInCart) {
-       res.status(200).send("Producto eliminado correctamente del carrito");
+      res.status(200).send("Producto eliminado correctamente del carrito");
     } else {
-       res.status(500).send("Error al eliminar producto del carrito");
+      res.status(500).send("Error al eliminar producto del carrito");
     }
   } catch (error) {
     console.error(error);

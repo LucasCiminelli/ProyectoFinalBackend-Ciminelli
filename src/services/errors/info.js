@@ -10,3 +10,7 @@ export const generateProductErrorInfo = (product) => {
     thumbnails: needs to be a Array, received ${product.thumbnails}
     `;
 };
+
+export const generateCartErrorInfo = (id)=>{
+    return `El carrito ${id} no fue encontrado en la base de datos`
+}

@@ -1,8 +1,9 @@
 import CartManager from "../dao/database/cartManager.js";
-
+import CustomError from "./errors/CustomError.js";
+import EErrors from "./errors/enums.js";
+import { generateCartErrorInfo } from "./errors/info.js";
 
 const cartManager = new CartManager();
-
 
 export default class cartService {
   async getCarts() {
@@ -16,7 +17,12 @@ export default class cartService {
     try {
       return await cartManager.getCartsById(id);
     } catch (error) {
-      throw new Error("Error en capa de Servicio", error);
+      CustomError.createError({
+        name: "Cart not found",
+        cause: generateCartErrorInfo(id), // Aquí puedes proporcionar más detalles sobre el error original
+        message: "Error trying to find the cart",
+        code: EErrors.DATABASE_ERROR,
+      });
     }
   }
   async createCart(cart) {

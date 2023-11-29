@@ -14,6 +14,8 @@ import viewsRouter from "./routes/viewsRouter.js";
 import userRouter from "./routes/userRouter.js";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
+import { logger } from "./utils/logger.js";
+import { errors } from "./middlewares/errors.js";
 
 import cookieParser from "cookie-parser";
 
@@ -26,12 +28,12 @@ dotenv.config();
 //conexión a la base de datos de MongoDB (Mongo Atlas)
 mongoose.connect(process.env.URL_MONGO);
 
-
 //inicialización del servidor express y configurando servidor de web sockets
 const app = express();
 const PORT = process.env.EXPRESS_PORT;
 
 const httpServer = app.listen(PORT, () => console.log("tuki"));
+app.use(errors);
 const socketServer = new Server(httpServer);
 
 app.use(express.json());
@@ -70,6 +72,11 @@ app.use("/", viewsRouter);
 app.use("/api", userRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
+
+app.get("/loggerTest", (req, res)=>{
+
+res.send("Checking the logs")
+})
 
 chatEvents(socketServer);
 productEvents(socketServer);
