@@ -1,0 +1,181 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtiene todos los productos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Se devolvieron correctamente los productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: Algo fallo en la busqueda de productos en la base de datos
+    post:
+      summary: Crea un producto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/createProduct"
+
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un producto por su ID
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto a buscar
+          schema:
+            $type: String
+      responses:
+        "200":
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        "500":
+          description: Algo fallo en la busqueda del producto especifico en la BD
+    put:
+      summary: Actualiza un producto a partir de su Id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto a buscar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateProduct"
+    delete:
+      summary: Elimina un producto a partir de su Id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto a eliminar
+          schema:
+            $type: String
+      responses:
+        "200":
+          description: Usuario eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        "500":
+          description: Algo fallo al eliminar al usuario de la BD
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId()
+          description: Id unico del producto
+        title:
+          type: String
+          description: Nombre del producto
+        code:
+          type: String
+          description: Codigo unico del producto
+        price:
+          type: Number
+          description: Precio del producto
+        stock:
+          type: String
+          description: Stock del producto
+        category:
+          type: String
+          description: Categoria del producto
+        thumbnails:
+          type: array
+          description: Fotos del producto
+      example:
+        _id: 123412cd232dasc3
+        title: Remera
+        description: Remera de Crossfit
+        code: 123asd
+        price: 2000
+        stock: 12
+        category: Ropa
+        thumbnails: []
+  requestBodies:
+    createProduct:
+      type: object
+      properties:
+        title:
+          type: String
+          description: Nombre del producto
+        code:
+          type: String
+          description: Codigo unico del producto
+        price:
+          type: Number
+          description: Precio del producto
+        stock:
+          type: String
+          description: Stock del producto
+        category:
+          type: String
+          description: Categoria del producto
+        thumbnails:
+          type: array
+          description: Fotos del producto
+      example:
+        title: Remera
+        description: Remera de Crossfit
+        code: 123asd
+        price: 2000
+        stock: 12
+        category: Ropa
+        thumbnails: []
+    updateProduct:
+      type: object
+      properties:
+        title:
+          type: String
+          description: Nombre del producto
+        code:
+          type: String
+          description: Codigo unico del producto
+        price:
+          type: Number
+          description: Precio del producto
+        stock:
+          type: String
+          description: Stock del producto
+        category:
+          type: String
+          description: Categoria del producto
+        thumbnails:
+          type: array
+          description: Fotos del producto
+      example:
+        title: Remera
+        description: Remera de Crossfit
+        code: 123asd
+        price: 2000
+        stock: 12
+        category: Ropa
+        thumbnails: []

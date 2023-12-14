@@ -1,4 +1,3 @@
-<!-- En products.handlebars -->
 
 <div
   class="max-w-3xl mx-auto py-10"
@@ -27,6 +26,7 @@
         <button
           class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded addToCartButton"
           data-product-id="{{this._id}}"
+          data-product-price="{{this.price}}"
           data-cart-id="{{cartId}}"
         >
           Agregar al carrito

@@ -29,9 +29,8 @@ export const getCartsById = async (req, res) => {
         message: "Error trying to find cart",
         code: EErrors.DATABASE_ERROR,
       });
-    } 
-      return res.status(200).send(findCartId);
-      
+    }
+    return res.status(200).send(findCartId);
   } catch (error) {
     console.error("Error al obtener el carrito:", error);
     res.status(500).send("Error al obtener el carrito");
@@ -191,6 +190,33 @@ export const deleteCart = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    res.status(500).send("Error interno del servidor");
+  }
+};
+
+export const endPurchase = async (req, res) => {
+  try {
+    const cartId = req.params.cid;
+    const cart = cartService.getCartsById(cartId);
+    const userEmail = req.body;
+
+    if (!cart) {
+      res.status(404).send("Carrito no encontrado");
+      return;
+    }
+
+    const productsNotPurchased = await cartService.endPurchase(
+      cartId,
+      userEmail
+    );
+
+    if (productsNotPurchased.length === 0) {
+      res.status(200).send("Compra realizada con exito");
+    } else {
+      res.status(500).json({ productsNotPurchased });
+    }
+  } catch (error) {
+    console.error("Error al procesar la compra", error);
     res.status(500).send("Error interno del servidor");
   }
 };

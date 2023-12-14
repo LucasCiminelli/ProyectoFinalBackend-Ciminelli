@@ -6,6 +6,9 @@ import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import session from "express-session";
 import dotenv from "dotenv";
+import __dirname from "./utils/index.js";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 // import de routers y managers
 import productsRouter from "./routes/productsRouter.js";
@@ -32,10 +35,29 @@ mongoose.connect(process.env.URL_MONGO);
 const app = express();
 const PORT = process.env.EXPRESS_PORT;
 
+//Swagger
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Documentación de mi API",
+      description: "Documentando API",
+    },
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`],
+};
+
+console.log(`${__dirname}/docs/**/*.yaml`);
+
+const specs = swaggerJsdoc(swaggerOptions);
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
+
+//Inicializando el servidor en el puerto establecido + tuki
 const httpServer = app.listen(PORT, () => console.log("tuki"));
 app.use(errors);
 const socketServer = new Server(httpServer);
 
+//Lineas mágicas
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -63,20 +85,23 @@ app.use((req, res, next) => {
   next();
 });
 
+//passport
 app.use(passport.session());
 app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
 
+//rutas
 app.use("/", viewsRouter);
 app.use("/api", userRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 
-app.get("/loggerTest", (req, res)=>{
+//logger
+app.get("/loggerTest", (req, res) => {
+  res.send("Checking the logs");
+});
 
-res.send("Checking the logs")
-})
-
+//socket
 chatEvents(socketServer);
 productEvents(socketServer);

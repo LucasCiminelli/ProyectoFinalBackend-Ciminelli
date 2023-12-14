@@ -13,7 +13,16 @@ const userSchema = new mongoose.Schema({
   password: String,
   cart: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "carts"
+    ref: "carts",
+  },
+  tickets: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "tickets",
+      },
+    ],
+    default: [],
   },
   rol: {
     type: String,

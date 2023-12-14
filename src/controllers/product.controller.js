@@ -9,7 +9,7 @@ export const getProducts = async (req, res) => {
   try {
     const { limit, page, sort, query } = req.query;
 
-    const modelLimit = limit ? parseInt(limit, 10) : 10;
+    const modelLimit = limit ? parseInt(limit, 10) : 15;
     const modelPage = page ? parseInt(page, 10) : 1;
     const modelQuery = query ? JSON.parse(query) : {};
 
@@ -65,11 +65,11 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    await productService.addProduct({ ...product, status: true });
+    await productService.createProduct({ ...product, status: true });
     const products = await productService.getProducts();
     req.context.socketServer.emit("update_products", products);
 
-    res.status(200).json(product);
+     res.status(200).json(product);
   } catch (error) {
     console.log(error);
     res.status(500).send("Producto no agregado");

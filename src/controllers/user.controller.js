@@ -116,6 +116,7 @@ export const current = async (req, res) => {
     email: req.user.email,
     rol: req.user.email === "adminCoder@coder.com" ? "Admin" : req.user.rol,
     cart: req.user.cart._id,
+    tickets: req.user.tickets,
   };
   console.log(req.user);
   res.send(userDTO);

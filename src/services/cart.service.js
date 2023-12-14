@@ -73,4 +73,13 @@ export default class cartService {
       throw new Error("Error en capa de servicio", error);
     }
   }
+
+  async endPurchase(cartId, userEmail) {
+    try {
+      return await cartManager.endPurchase(cartId, userEmail);
+    } catch (error) {
+      logger.error("Error al intentar finalizar la compra", error);
+      throw new Error("Error en capa de servicio".error);
+    }
+  }
 }

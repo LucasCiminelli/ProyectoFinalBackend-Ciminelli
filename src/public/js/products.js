@@ -1,6 +1,5 @@
 // products.js
-const addProductToCart = async (cartId, productId, quantity) => {
-  
+const addProductToCart = async (cartId, productId, quantity, price) => {
   try {
     if (!cartId) {
       console.error("Error: cartId no válido");
@@ -12,7 +11,7 @@ const addProductToCart = async (cartId, productId, quantity) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ quantity }),
+      body: JSON.stringify({ quantity, price }),
     });
 
     if (!response.ok) {
@@ -41,8 +40,11 @@ addToCartButtons.forEach((button) => {
   button.addEventListener("click", async () => {
     const productId = button.getAttribute("data-product-id");
     const quantity = 1;
+    const price = parseFloat(button.getAttribute("data-product-price"));
     if (userRole === "Admin") {
-      console.log("Usuario es un administrador. No se puede agregar al carrito.");
+      console.log(
+        "Usuario es un administrador. No se puede agregar al carrito."
+      );
       Swal.fire({
         title: "Usuario es un administrador. No se puede agregar al carrito.",
         icon: "error",
@@ -50,11 +52,11 @@ addToCartButtons.forEach((button) => {
         timer: 1500,
       });
       return;
-      }
+    }
 
     try {
-      await addProductToCart(cartId, productId, quantity);
-      console.log("Producto añadido al carrito correctamente");
+      await addProductToCart(cartId, productId, quantity, price);
+      console.log("Producto añadido al carrito correctamente", price);
       Swal.fire({
         title: "Producto añadido al carrito",
         icon: "success",

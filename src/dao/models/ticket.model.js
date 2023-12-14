@@ -9,7 +9,7 @@ const ticketSchema = new mongoose.Schema({
     default: uuidv4,
     unique: true,
   },
-  purchase_datatime: {
+  purchase_datetime: {
     type: Date,
     default: Date.now,
   },

@@ -77,6 +77,8 @@ export const renderCart = async (req, res) => {
     const cartProducts = cart.products.map((prod) => ({
       title: prod.product.title,
       quantity: prod.quantity,
+      price: prod.product.price,
+      subtotal: prod.product.price * prod.quantity,
     }));
 
     res.render("cart", { products: cartProducts, cid });

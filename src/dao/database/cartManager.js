@@ -2,6 +2,10 @@ import { cartModel } from "../models/cart.model.js";
 import { productModel } from "../models/product.model.js";
 import { logger } from "../../utils/logger.js";
 import { errors } from "../../middlewares/errors.js";
+import { ticketModel } from "../models/ticket.model.js";
+import ProductManager from "./productManager.js";
+
+const productManager = new ProductManager();
 
 export default class CartManager {
   async getCarts() {
@@ -61,9 +65,13 @@ export default class CartManager {
         const productToAdd = await productModel.findOne({ _id: prodId }).lean();
 
         if (productToAdd) {
+          const price = productToAdd.price; // Get the price from the product
+          logger.info(`Adding product to cart with price: ${price}`);
           existingProduct.products.push({
             product: prodId,
             quantity: quantity,
+            price: price,
+            subtotal: price * quantity,
           });
         } else {
           logger.error(
@@ -126,7 +134,7 @@ export default class CartManager {
           {
             products: updatedProducts,
           },
-          { new: true }
+          { new: true, upsert: false }
         )
         .populate("products.product");
 
@@ -137,5 +145,52 @@ export default class CartManager {
     }
   }
 
-  async endPurchase() {}
+  async endPurchase(cartId, userEmail) {
+    const cart = await cartModel.findById(cartId);
+
+    if (!cart) {
+      logger.error("Carrito no encontrado");
+      return null;
+    }
+
+    const productsNotPurchased = [];
+
+    for (const product of cart.products) {
+      if (product.quantity > parseInt(product.product.stock, 10)) {
+        productsNotPurchased.push(product.product._id);
+      } else {
+        const currentStock = parseInt(product.product.stock, 10);
+        if (isNaN(currentStock)) {
+          logger.error("El tipo del stock no es un tipo valido");
+        }
+        const newStock = parseInt(currentStock) - product.quantity;
+        product.product.stock = newStock.toString();
+        const updatedProduct = await productManager.updateProduct(
+          product.product._id,
+          { $set: { stock: newStock } }
+        );
+
+        if (!updatedProduct) {
+          logger.error(
+            `No se pudo actualizar el producto con id ${product.product._id}`
+          );
+        }
+      }
+    }
+
+    const newTicket = await ticketModel.create({
+      amount: 1,
+      purchaser: userEmail.email.toString(),
+    });
+    logger.info(newTicket);
+
+    // Corregir el filtro
+    cart.products = cart.products.filter((product) => {
+      return !productsNotPurchased.includes(product.product._id);
+    });
+
+    const updatedCart = await this.updateProductsInCart(cartId, cart.products);
+
+    return productsNotPurchased;
+  }
 }

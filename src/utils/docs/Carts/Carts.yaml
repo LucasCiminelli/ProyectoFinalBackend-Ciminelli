@@ -1,0 +1,189 @@
+paths:
+  /api/carts:
+    get:
+      summary: Obtiene todos los carritos
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Se devolvieron correctamente los carritos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Cart"
+        "500":
+          description: Algo falló en la búsqueda de carritos en la BD.
+    post:
+      summary: Crea un nuevo carrito
+      tags:
+        - Carts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/createCart"
+      responses:
+        "200":
+          description: Carrito creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cart"
+
+  /api/carts/{cid}:
+    get:
+      summary: Obtiene un carrito por su ID
+      tags:
+        - Carts
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del carrito a buscar
+          schema:
+            $type: String
+      responses:
+        "200":
+          description: Carrito encontrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cart"
+        "500":
+          description: Algo fallo en la busqueda del carrito especifico
+    put:
+      summary: Actualiza el carrito a partir de su ID
+      tags:
+        - Carts
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto a buscar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateProductsInCart"
+    delete:
+      summary: Elimina un carrito a partir de su ID
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito a eliminar
+          schema:
+            $type: String
+      responses:
+        "200":
+          description: Carrito eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cart"
+        "500":
+          description: Algo fallo al eliminar el carrito
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId()
+          description: ID unico del carrito
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: ObjectId()
+                description: ID del producto en el carrito
+              quantity:
+                type: Number
+                description: Cantidad del producto en el carrito
+      example:
+        _id: 123bdL123ai3dc2
+        products:
+          - product: "4slie38490cldi23"
+            quantity: 2
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId()
+          description: Id unico del producto
+        title:
+          type: String
+          description: Nombre del producto
+        code:
+          type: String
+          description: Codigo unico del producto
+        price:
+          type: Number
+          description: Precio del producto
+        stock:
+          type: String
+          description: Stock del producto
+        category:
+          type: String
+          description: Categoria del producto
+        thumbnails:
+          type: array
+          description: Fotos del producto
+      example:
+        _id: 123412cd232dasc3
+        title: Remera
+        description: Remera de Crossfit
+        code: 123asd
+        price: 2000
+        stock: 12
+        category: Ropa
+        thumbnails: []
+
+  requestBodies:
+    createCart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId()
+          description: Id unico del carrito
+        products:
+          type: array
+          properties:
+            product:
+              type: ObjectId()
+              description: Id del producto en el carrito
+            quantity:
+              type: Number
+              description: Cantidad del producto en el carrito
+      example:
+        _id: "123412cd232dasc3"
+        products:
+          - product: "456def7890ab"
+            quantity: 2
+    updateProductsInCart:
+      type: object
+      properties:
+        products:
+          type: array
+          properties:
+            product:
+              type: ObjectId()
+              description: Id del producto en el carrito
+            quantity:
+              type: Number
+              description: Cantidad del producto en el carrito
+      example:
+        products:
+          - product: "456def7890ab"
+            quantity: 2

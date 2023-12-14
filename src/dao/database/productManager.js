@@ -4,11 +4,11 @@ import { logger } from "../../utils/logger.js";
 
 export default class ProductManager {
   async getProducts(query, options) {
-    const { page, limit, sort } = options;
+    const { page, limit, sort } = options || {};
 
     const paginateOptions = {
       page: page || 1,
-      limit: limit || 10,
+      limit: limit || 15,
       sort: sort || {},
       lean: true,
     };
