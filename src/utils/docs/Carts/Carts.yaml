@@ -59,10 +59,10 @@ paths:
       tags:
         - Carts
       parameters:
-        - name: pid
+        - name: cid
           in: path
           required: true
-          description: Id del producto a buscar
+          description: Id del carrito que se actualizará
           schema:
             $type: String
       requestBody:
@@ -91,6 +91,111 @@ paths:
                 $ref: "#components/schemas/Cart"
         "500":
           description: Algo fallo al eliminar el carrito
+
+  /api/carts/{cid}/product/{pid}:
+    post:
+      summary: Agrega un producto al carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito al que se agregará el producto
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que se agregará al carrito
+          schema:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  description: Cantidad del producto a agregar
+              required:
+                - quantity
+      responses:
+        "200":
+          description: Producto agregado correctamente al carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cart"
+        "500":
+          description: Algo fallo al agregar el producto al carrito
+    put:
+      summary: Actualiza la cantidad de un producto en el carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito al que se le actualizará la cantiadad del producto
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que se actualizará su cantidad en el carrito
+          schema:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  description: Cantidad del producto a modificar
+              required:
+                - quantity
+      responses:
+        "200":
+          description: Cantidad del producto actualizada correctamente en el carrito
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cart"
+        "500":
+          description: Algo fallo al modificar la cantidad del producto al carrito
+
+    delete:
+      summary: Elimina un producto del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito al que se le eliminará el producto
+          schema:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que se eliminará del carrito
+          schema:
+            $type: String
+      responses:
+        "200":
+          description: Producto eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cart"
+        "500":
+          description: Error al eliminar el producto del carrito
 
 components:
   schemas:
