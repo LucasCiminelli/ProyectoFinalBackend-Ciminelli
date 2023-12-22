@@ -145,6 +145,22 @@ export default class CartManager {
     }
   }
 
+  async deleteCart(cartId) {
+    try {
+      const deletedCart = await cartModel.findOneAndDelete({ _id: cartId });
+
+      if (!deletedCart) {
+        logger.error("Carrito no encontrado");
+        return null;
+      }
+
+      return deletedCart;
+    } catch (err) {
+      logger.error(err);
+      return null;
+    }
+  }
+
   async endPurchase(cartId, userEmail) {
     const cart = await cartModel.findById(cartId);
 

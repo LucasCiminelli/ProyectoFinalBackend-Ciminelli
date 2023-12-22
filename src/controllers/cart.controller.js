@@ -10,7 +10,7 @@ const productManager = new ProductManager();
 export const getCarts = async (req, res) => {
   try {
     const carts = await cartService.getCarts();
-    res.json(carts);
+    res.send({ status: "success", payload: carts });
   } catch (error) {
     res.status(500).json({ error: "Not found" });
   }
@@ -41,7 +41,7 @@ export const createCart = async (req, res) => {
   try {
     const newCart = await cartService.createCart();
 
-    res.status(201).json(newCart);
+    res.send({ status: "success", payload: newCart });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -123,7 +123,7 @@ export const updateProductsInCart = async (req, res) => {
     }
     res.status(200).send({
       status: "success",
-      updatedCart,
+      payload: updatedCart,
     });
   } catch (error) {
     console.error(error);
@@ -173,20 +173,17 @@ export const deleteCart = async (req, res) => {
   try {
     const cid = req.params.cid;
 
-    const cart = await cartService.getCartsById(cid);
+    const deletedCart = await cartService.deleteCart(cid);
 
-    if (!cart) {
+    if (!deletedCart) {
       res.status(404).send("Carrito no encontrado");
       return;
     }
 
-    cart.products = [];
-
-    await cart.save();
-
-    res.status(200).send({
+    res.send({
       status: "success",
-      message: "todos los productos fueron eliminados del carrito",
+      message: "Carrito eliminado correctamente",
+      payload: deletedCart,
     });
   } catch (error) {
     console.error(error);

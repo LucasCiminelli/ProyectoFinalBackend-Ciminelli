@@ -27,7 +27,7 @@ export const getProducts = async (req, res) => {
       sort: sortOptions,
     });
 
-    res.status(200).send(products);
+    res.send({ status: "success", payload: products });
   } catch (error) {
     res.status(500).send("Error");
   }
@@ -65,11 +65,14 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    await productService.createProduct({ ...product, status: true });
+    const result = await productService.createProduct({
+      ...product,
+      status: true,
+    });
     const products = await productService.getProducts();
     req.context.socketServer.emit("update_products", products);
 
-     res.status(200).json(product);
+    res.send({ status: "success", payload: result });
   } catch (error) {
     console.log(error);
     res.status(500).send("Producto no agregado");
@@ -88,7 +91,11 @@ export const updateProduct = async (req, res) => {
   req.context.socketServer.emit("update_products", products);
 
   if (updatedProduct) {
-    res.status(200).send(updatedProduct);
+    res.send({
+      status: "success",
+      message: "Product Updated",
+      payload: updatedProduct,
+    });
   } else {
     res.status(404).send("producto no encontrado");
   }

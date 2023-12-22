@@ -73,6 +73,14 @@ export default class cartService {
       throw new Error("Error en capa de servicio", error);
     }
   }
+  async deleteCart(cartId) {
+    try {
+      return await cartManager.deleteCart(cartId);
+    } catch (err) {
+      logger.error("Error al eliminar un producto del carrito", error);
+      throw new Error("Error en capa de servicio", error);
+    }
+  }
 
   async endPurchase(cartId, userEmail) {
     try {
