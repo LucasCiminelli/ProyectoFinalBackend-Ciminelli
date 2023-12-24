@@ -29,5 +29,6 @@ describe("Test de login con jwt", () => {
       .set("Cookie", [`${cookie.name}=${cookie.value}`]);
 
     console.log(_body);
+    expect(_body.email).to.be.equal("probatik@gmail.com");
   });
 });
