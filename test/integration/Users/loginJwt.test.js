@@ -6,6 +6,20 @@ const requester = supertest("http://localhost:8080");
 
 describe("Test de login con jwt", () => {
   let cookie;
+
+  it("Debería registrar un usuario al hacer POST a /api/signup", async () => {
+    const userMock = {
+      first_name: "LucasPrueba",
+      last_name: "PruebaLucas",
+      age: 12,
+      email: "LucasPrueba@prueba.com",
+      password: "123asd",
+    };
+
+    const result = await requester.post("/api/signup").send(userMock);
+    console.log(result);
+  });
+
   it("Debería devolver una Cookie al hacer post a api/loginJwt", async () => {
     const user = {
       email: "probatik@gmail.com",
