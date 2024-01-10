@@ -13,8 +13,8 @@ const config = {
         ),
       }),
       new winston.transports.File({
-        filename: "/errors.log",
         level: "error",
+        filename: "./logs/errors.log",
       }),
     ],
   },
@@ -32,7 +32,6 @@ const config = {
 };
 
 export const logger = winston.createLogger(config[process.env.environment]);
-
 
 export const addLogger = (req, res, next) => {
   req.logger = logger;

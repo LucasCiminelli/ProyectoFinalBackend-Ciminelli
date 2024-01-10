@@ -28,6 +28,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "User",
   },
+  documents: {
+    type: [
+      {
+        name: String,
+        reference: String,
+      },
+    ],
+  },
+  last_connection: {
+    type: Date,
+    default: Date.now,
+    action: {
+      type: String,
+      enum: ["login", "logout"],
+      required: true,
+    },
+  },
 });
 
 const userModel = mongoose.model(userCollection, userSchema);

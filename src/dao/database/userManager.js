@@ -13,4 +13,21 @@ export default class userManager {
       throw new Error("Error en capa de servicio", error);
     }
   }
+
+  async getUserById(id) {
+    try {
+      const user = await userModel.findById({ _id: id });
+      if (!user) {
+        console.error("Usuario no encontrado");
+        return;
+      }
+      return user;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async updateLastConnection(id, lastConnection) {
+    return userModel.findByIdAndUpdate(id, { $set: lastConnection });
+  }
 }

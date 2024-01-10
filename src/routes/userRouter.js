@@ -1,5 +1,4 @@
 import { Router } from "express";
-import UserManager from "../dao/database/userManager.js";
 import passport from "passport";
 import {
   signupLocal,
@@ -9,12 +8,11 @@ import {
   loginJwt,
   getCookies,
   current,
+  userToPremium,
+  uploadUserDocuments,
 } from "../controllers/user.controller.js";
 
-
-
 const router = Router();
-
 
 router.post(
   "/signup",
@@ -45,5 +43,8 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   current
 );
+
+router.post("/premium/:uid", userToPremium);
+router.post("/:uid/documents", uploadUserDocuments);
 
 export default router;

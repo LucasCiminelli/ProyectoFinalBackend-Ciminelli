@@ -93,7 +93,7 @@ app.use(passport.initialize());
 
 //rutas
 app.use("/", viewsRouter);
-app.use("/api", userRouter);
+app.use("/api/", userRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 

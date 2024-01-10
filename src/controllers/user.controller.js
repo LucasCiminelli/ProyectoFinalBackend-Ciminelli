@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import UserService from "../services/user.service.js";
+import { multerUploader } from "../utils/multerUploader.js";
 
 dotenv.config();
 
@@ -80,11 +81,19 @@ export const loginJwt = async (req, res) => {
     return res.send("Correo electrónico no válido");
   }
 
+  await userService.updateLastConnection(user._id, {
+    last_connection: new Date(),
+  });
+
   req.session.first_name = user.first_name;
   req.session.last_name = user.last_name;
   req.session.email = user.email;
   req.session.age = user.age;
   req.session.isLogged = true;
+  req.session.last_connection = user.last_connection;
+
+  console.log("el id del usuario es:", user._id.toJSON());
+
   if (
     req.session.email === "adminCoder@coder.com" &&
     req.body.password === "adminCod3r123"
@@ -120,4 +129,79 @@ export const current = async (req, res) => {
   };
   console.log(req.user);
   res.send(userDTO);
+};
+
+export const uploadUserDocuments = (req, res) => {
+  const userId = req.params.uid;
+
+  const user = userService.getUserById(userId);
+
+  if (!user) {
+    res.status(500).send("No se ha encontrado al usuario");
+  }
+
+  const documentType = req.body.documentType;
+
+  let folderName;
+
+  if (documentType === "profile") {
+    folderName = "profiles";
+  } else if (documentType === "products") {
+    folderName = "products";
+  } else {
+    folderName = "documents";
+  }
+
+  const uploadMiddleware = uploader(folderName).array("documents", 5);
+
+  uploadMiddleware(req, res, async (err) => {
+    if (err) {
+      return res.status(500).send("Error al cargar los documentos");
+    }
+
+    user.documents.push({
+      type: documentType,
+      filenames: req.files.map((file) => file.filename),
+    });
+
+    await user.save();
+    res.status(200).send("Documentos cargados exitosamente");
+  });
+};
+
+export const userToPremium = async (req, res) => {
+  const uid = req.params.uid;
+
+  const user = await userService.getUserById(uid);
+
+  console.log("el user es:", user);
+  console.log("los documentos del usuario son:", user.documents);
+
+  if (!user) {
+    res.status(500).send("Usuario no encontrado");
+  }
+
+  const requiredDocuments = [
+    "Identificacion",
+    "Comprobante de domicilio",
+    "Comprobante de estado de cuenta",
+  ];
+
+  const hasRequiredDocuments = requiredDocuments.every((doc) => {
+    user.documents.some((d) => d.type === doc);
+  });
+
+  if (user.rol === "Premium") {
+    return res.status(500).send("El usuario ya es Premium");
+  }
+
+  if (!hasRequiredDocuments) {
+    user.rol = "User";
+    await user.save();
+    return res.status(400).send("El usuario debe cargar todos los documentos");
+  }
+
+  user.rol = "Premium";
+  await user.save();
+  return res.status(200).send("Usuario Actualizado a Premium");
 };
