@@ -10,9 +10,16 @@ import {
   current,
   userToPremium,
   uploadUserDocuments,
+  getAllUsers,
+  deleteInactiveUsers,
+  adminDelete,
+  updateRolByAdmin,
 } from "../controllers/user.controller.js";
+import { isAdmin } from "../middlewares/currentAuth.js";
 
 const router = Router();
+
+router.get("/users", getAllUsers);
 
 router.post(
   "/signup",
@@ -46,5 +53,8 @@ router.get(
 
 router.post("/premium/:uid", userToPremium);
 router.post("/:uid/documents", uploadUserDocuments);
+router.delete("/users", deleteInactiveUsers);
+router.delete("/adminDelete/:uid", isAdmin, adminDelete);
+router.put("/updateUserRol/:uid", isAdmin, updateRolByAdmin);
 
 export default router;

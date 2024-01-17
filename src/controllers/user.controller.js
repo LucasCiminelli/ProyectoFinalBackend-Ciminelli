@@ -3,10 +3,31 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import UserService from "../services/user.service.js";
 import { multerUploader } from "../utils/multerUploader.js";
+import { logger } from "../utils/logger.js";
+import { transporter } from "../utils/emailService.js";
 
 dotenv.config();
 
 const userService = new UserService();
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await userService.getAllUsers();
+    if (!users) {
+      return res.status(400).send("Usuarios no encontrados");
+    }
+    const userDTO = users.map((user) => ({
+      name: user.first_name,
+      lastname: user.last_name,
+      email: user.email,
+      rol: user.rol,
+    }));
+    return res.send({ status: "success", payload: userDTO });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al obtener usuarios");
+  }
+};
 
 export const signupLocal = async (req, res) => {
   return res.redirect("/login");
@@ -111,7 +132,7 @@ export const loginJwt = async (req, res) => {
 
   res
     .cookie("coderCookieToken", token, { maxAge: 1000000000, httpOnly: true })
-    .send("logueado");
+    .redirect("/products");
 };
 
 export const getCookies = (req, res) => {
@@ -204,4 +225,51 @@ export const userToPremium = async (req, res) => {
   user.rol = "Premium";
   await user.save();
   return res.status(200).send("Usuario Actualizado a Premium");
+};
+
+export const deleteInactiveUsers = async (req, res) => {
+  try {
+    const deletedUsers = await userService.deleteInactiveUsers();
+    for (user of deletedUsers) {
+      const message = {
+        from: "emilia66@ethereal.email",
+        to: `${user.email}`,
+        subject: "Cuenta eliminada",
+        text: "Tu cuenta fue eliminada.",
+        html: `<p><b>Hola ${user.first_name} </b> tu cuenta fue eliminada por inactividad</p>`,
+      };
+      await transporter.sendMail(message);
+    }
+    res
+      .status(200)
+      .send("Usuarios eliminados y correos enviados correctamente!");
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .send("Error al eliminar usuarios y enviar correos: ", err.message);
+  }
+};
+
+export const adminDelete = async (req, res) => {
+  try {
+    const id = req.params.uid;
+    const deleteUser = await userService.adminDelete(id);
+    return res.status(200).send(deleteUser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error al eliminar al usuario");
+  }
+};
+
+export const updateRolByAdmin = async (req, res) => {
+  try {
+    const id = req.params.uid;
+    const rol = req.body.rol;
+    const updatedUser = await userService.updateRolByAdmin(id, rol);
+    return res.status(200).send(updatedUser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error al actualizar el rol del usuario");
+  }
 };

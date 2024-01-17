@@ -11,7 +11,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const cartManager = new CartManager()
+const cartManager = new CartManager();
 
 const initializePassport = () => {
   passport.use(
@@ -37,6 +37,10 @@ const initializePassport = () => {
           const cart = await cartManager.createCart();
 
           user.cart = cart._id;
+
+          if (user.email === "adminCoder@coder.com") {
+            user.rol = "Admin";
+          }
 
           await user.save();
 
@@ -124,6 +128,7 @@ const initializePassport = () => {
           if (!user) {
             return done(null, false);
           }
+
           console.log(process.env.JWT_PRIVATE_KEY);
           return done(null, user);
         } catch (error) {

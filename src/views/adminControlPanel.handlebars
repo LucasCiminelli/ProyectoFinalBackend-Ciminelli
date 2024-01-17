@@ -1,0 +1,44 @@
+<h1 class="font-bold text-xl text-center">PANEL DE ADMINISTRADOR DE USUARIOS</h1>
+<div
+  id="user-list"
+  class="user-container"
+  data-user-id="{{userId}}"
+  data-user-rol="{{rol}}"
+>
+  {{#each usuarios}}
+    <div class="p-6 bg-white rounded border product-container">
+      <p class="font-bold text-xl">Nombre: {{name}}</p>
+      <p class="text-gray-700">Apellido: {{lastName}}</p>
+      <p class="text-gray-700">Edad: {{age}}</p>
+      <p class="text-gray-700">Email: {{email}}</p>
+      <label for="rol{{id}}">Rol:</label>
+      <select
+        id="rol{{id}}"
+        name="rol"
+        class="rol-dropdown"
+        data-user-id="{{id}}"
+      >
+        <option value="" selected>{{rol}}</option>
+        <option value="User">User</option>
+        <option value="Admin">Admin</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <div>
+        <button
+          class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded update-button"
+          data-user-id="{{id}}"
+          data-user-rol="{{rol}}"
+        >
+          Modificar usuario
+        </button>
+        <button
+          class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded deleteUser"
+          data-user-id="{{id}}"
+        >
+          Eliminar usuario
+        </button>
+      </div>
+    </div>
+  {{/each}}
+</div>
+<script src="/js/adminPanel.js"></script>

@@ -20,7 +20,7 @@ router.get("/", getProducts);
 router.get("/mockingproducts", getProductsMocks);
 router.get("/:pid", getProductsById);
 router.post("/", uploader.single("file"), createProduct);
-router.put("/:pid", isAdmin, updateProduct);
+router.put("/:pid", updateProduct);
 router.delete("/:pid", isAdmin, deleteProduct);
 
 export default router;

@@ -1,11 +1,15 @@
 import { cartModel } from "../models/cart.model.js";
 import { productModel } from "../models/product.model.js";
+import { userModel } from "../models/user.model.js";
 import { logger } from "../../utils/logger.js";
 import { errors } from "../../middlewares/errors.js";
 import { ticketModel } from "../models/ticket.model.js";
 import ProductManager from "./productManager.js";
+import { calculateTotal } from "../../utils/calculateTotal.js";
+import UserManager from "./userManager.js";
 
 const productManager = new ProductManager();
+const userManager = new UserManager();
 
 export default class CartManager {
   async getCarts() {
@@ -161,52 +165,64 @@ export default class CartManager {
     }
   }
 
-  async endPurchase(cartId, userEmail) {
-    const cart = await cartModel.findById(cartId);
+  async endPurchase(cartId, userId) {
+    try {
+      const cart = await this.getCartsById(cartId);
+      const user = await userManager.getUserByCartId(cartId);
 
-    if (!cart) {
-      logger.error("Carrito no encontrado");
-      return null;
-    }
+      if (!cart || !user) {
+        logger.error("User o carrito no encontrado");
+      }
 
-    const productsNotPurchased = [];
+      console.log("el user es:", user);
+      console.log("el carrito es:", cart);
 
-    for (const product of cart.products) {
-      if (product.quantity > parseInt(product.product.stock, 10)) {
-        productsNotPurchased.push(product.product._id);
-      } else {
-        const currentStock = parseInt(product.product.stock, 10);
-        if (isNaN(currentStock)) {
-          logger.error("El tipo del stock no es un tipo valido");
-        }
-        const newStock = parseInt(currentStock) - product.quantity;
-        product.product.stock = newStock.toString();
-        const updatedProduct = await productManager.updateProduct(
-          product.product._id,
-          { $set: { stock: newStock } }
-        );
+      const productsNotPurchased = [];
 
-        if (!updatedProduct) {
-          logger.error(
-            `No se pudo actualizar el producto con id ${product.product._id}`
+      for (const product of cart.products) {
+        if (product.quantity > product.product.stock) {
+          productsNotPurchased.push(product.product._id);
+        } else {
+          const currentStock = product.product.stock;
+
+          const newStock = currentStock - product.quantity;
+          product.product.stock = newStock;
+          const updatedProduct = await productManager.updateProduct(
+            product.product._id.toString(),
+            { $set: { stock: newStock } }
           );
+
+          if (!updatedProduct) {
+            logger.error(
+              `No se pudo actualizar el producto con id ${product.product._id}`
+            );
+          }
         }
       }
+
+      const newTicket = await ticketModel.create({
+        amount: calculateTotal(cart.products),
+        purchaser: user.email,
+      });
+
+      await newTicket.save();
+
+      user.tickets.push(newTicket);
+
+      await user.save();
+
+      cart.products = cart.products.filter((product) => {
+        return productsNotPurchased.includes(product.product._id.toString());
+      });
+
+      const updatedCart = await this.updateProductsInCart(
+        cartId,
+        cart.products
+      );
+      return productsNotPurchased;
+    } catch (error) {
+      console.error(error);
+      return null;
     }
-
-    const newTicket = await ticketModel.create({
-      amount: 1,
-      purchaser: userEmail.email.toString(),
-    });
-    logger.info(newTicket);
-
-    // Corregir el filtro
-    cart.products = cart.products.filter((product) => {
-      return !productsNotPurchased.includes(product.product._id);
-    });
-
-    const updatedCart = await this.updateProductsInCart(cartId, cart.products);
-
-    return productsNotPurchased;
   }
 }

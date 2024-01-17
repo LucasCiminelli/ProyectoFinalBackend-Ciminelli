@@ -1,5 +1,9 @@
-<div class="max-w-md mx-auto bg-white rounded p-8 mt-10 shadow-lg" data-cart-id="{{cartId}}">
-  <h1 class="text-2xl font-bold mb-4">Carrito de Compras</h1>
+<div
+  class="max-w-md mx-auto bg-white rounded p-8 mt-10 shadow-lg"
+  data-cart-id="{{cid}}"
+>
+  <h1 class="text-3xl font-bold mb-4">Carrito de Compras</h1>
+  <p class="mb-3">Este carrito pertenece al usuario: {{user.first_name}}</p>
 
   <ul class="list-disc pl-4">
     {{#each products}}
@@ -11,17 +15,21 @@
         - Precio: $
         {{price}}
         - Subtotal: ${{this.subtotal}}
+
       </li>
+
     {{/each}}
-     <button
-          class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded endPurchaseButton"
-          data-product-id="{{this._id}}"
-          data-product-price="{{this.price}}"
-          data-cart-id="{{cartId}}"
-          data-user-email="{{userEmail}}"
-        >
-          End Purchase
-        </button>
+
   </ul>
-   <script src="/js/carts.js"></script>
+  <h4 class="text-xl font-bold mb-4">Total: {{cartTotal}}</h4>
+  <button
+    class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded endPurchaseButton"
+    data-product-price="{{this.price}}"
+    data-cart-id="{{cid}}"
+    data-user-id="{{user._id}}"
+  >
+    End Purchase
+  </button>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/js/carts.js"></script>
 </div>

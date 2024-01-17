@@ -1,6 +1,7 @@
 import ProductManager from "../dao/database/productManager.js";
 import CartManager from "../dao/database/cartManager.js";
 import UserManager from "../dao/database/userManager.js";
+import { calculateTotal } from "../utils/calculateTotal.js";
 
 const productManager = new ProductManager();
 const cartManager = new CartManager();
@@ -18,8 +19,6 @@ export const RenderRealTimeProducts = async (req, res) => {
 export const renderChat = (req, res) => {
   res.render("chat", {});
 };
-
-// En viewsController.js
 
 export const renderProducts = async (req, res) => {
   try {
@@ -66,7 +65,7 @@ export const renderCart = async (req, res) => {
     }
 
     const cartId = user.cart._id;
-    const cid = cartId; // Asignas el valor de cartId a cid
+    const cid = cartId;
     const cart = await cartManager.getCartsById(cartId);
 
     if (!cart) {
@@ -81,7 +80,9 @@ export const renderCart = async (req, res) => {
       subtotal: prod.product.price * prod.quantity,
     }));
 
-    res.render("cart", { products: cartProducts, cid });
+    const cartTotal = calculateTotal(cart.products);
+
+    res.render("cart", { products: cartProducts, cid, user, cartTotal });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error interno del servidor");
@@ -113,4 +114,18 @@ export const renderRecover = (req, res) => {
 
 export const renderLoginJwt = (req, res) => {
   res.render("loginJwt");
+};
+
+export const renderControlPanel = async (req, res) => {
+  const users = await userManager.getAllUsers({});
+  const usersDTO = users.map((user) => ({
+    name: user.first_name,
+    lastName: user.last_name,
+    age: user.age,
+    email: user.email,
+    rol: user.rol,
+    id: user._id.toJSON(),
+  }));
+  console.log(usersDTO);
+  res.render("adminControlPanel", { usuarios: usersDTO });
 };

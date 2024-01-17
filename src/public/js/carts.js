@@ -1,4 +1,4 @@
-const endPurchase = async (cartId, userEmail) => {
+const endPurchase = async (cartId, userId) => {
   // products.js
   try {
     if (!cartId) {
@@ -11,7 +11,7 @@ const endPurchase = async (cartId, userEmail) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ cartId, userEmail }),
+      body: JSON.stringify({ cartId: cartId }),
     });
 
     if (!response.ok) {
@@ -25,19 +25,25 @@ const endPurchase = async (cartId, userEmail) => {
 };
 
 const endPurchaseButton = document.querySelector(".endPurchaseButton");
-document.addEventListener("DOMContentLoaded", () => {
-  endPurchaseButton.addEventListener("click", async () => {
-    // Obtiene el valor de cartId desde algún lugar en tu DOM
-    let cartId = document.querySelector("#cartId").value;
 
-    if (!cartId) {
-      console.error("Error: cartId no válido");
-      return;
-    }
+endPurchaseButton.addEventListener("click", async () => {
+  const cartId = endPurchaseButton.getAttribute("data-cart-id");
+  const userId = endPurchaseButton.getAttribute("data-user-id");
 
-    // Obtén userEmail de la misma manera
-    let userEmail = document.querySelector("#userEmail").value;
+  if (!cartId) {
+    console.error("Error: cartId no válido");
+    return;
+  }
 
-    await endPurchase(cartId, userEmail);
+  await endPurchase(cartId, userId);
+  console.log("Compra realizada con exito");
+  Swal.fire({
+    title: "Compra realizada con exito",
+    icon: "success",
+    showConfirmButton: false,
+    timer: 1500,
   });
+  setTimeout(() => {
+    window.location.reload();
+  }, 1200);
 });

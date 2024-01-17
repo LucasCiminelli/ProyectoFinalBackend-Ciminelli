@@ -1,11 +1,13 @@
-import ProductManager from "../dao/database/productManager.js";
+import ProductService from "../services/product.service.js";
 import CartService from "../services/cart.service.js";
+import UserService from "../services/user.service.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
 import { generateCartErrorInfo } from "../services/errors/info.js";
 
 const cartService = new CartService();
-const productManager = new ProductManager();
+const productService = new ProductService();
+const userService = new UserService();
 
 export const getCarts = async (req, res) => {
   try {
@@ -60,7 +62,7 @@ export const addProductToCart = async (req, res) => {
       return;
     }
 
-    const findProd = await productManager.getProductsById(pid);
+    const findProd = await productService.getProductsById(pid);
 
     if (!findProd) {
       res.status(404).send("Producto no encontrado");
@@ -194,23 +196,28 @@ export const deleteCart = async (req, res) => {
 export const endPurchase = async (req, res) => {
   try {
     const cartId = req.params.cid;
-    const cart = cartService.getCartsById(cartId);
-    const userEmail = req.body;
+    const cart = await cartService.getCartsById(cartId);
+    const user = await userService.getUserByCartId(cartId);
+
+    console.log(user);
 
     if (!cart) {
       res.status(404).send("Carrito no encontrado");
-      return;
+      return null;
     }
 
-    const productsNotPurchased = await cartService.endPurchase(
-      cartId,
-      userEmail
-    );
+    const userId = user._id;
 
+    const productsNotPurchased = await cartService.endPurchase(cartId, userId);
     if (productsNotPurchased.length === 0) {
-      res.status(200).send("Compra realizada con exito");
+      res
+        .status(200)
+        .send({ message: "Compra realizada con exito", success: true });
     } else {
-      res.status(500).json({ productsNotPurchased });
+      res.status(500).json({
+        error: "Algunos productos no pudieron ser comprados",
+        productsNotPurchased,
+      });
     }
   } catch (error) {
     console.error("Error al procesar la compra", error);
