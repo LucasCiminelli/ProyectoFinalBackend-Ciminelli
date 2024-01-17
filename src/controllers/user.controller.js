@@ -46,7 +46,7 @@ export const loginLocal = async (req, res) => {
     req.body.password === "adminCod3r123"
   ) {
     req.session.rol = "Admin";
-    return res.redirect("/products");
+    return res.redirect("/adminControlPanel");
   } else {
     req.session.rol = "User";
   }
@@ -102,6 +102,12 @@ export const loginJwt = async (req, res) => {
     return res.send("Correo electrónico no válido");
   }
 
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    return res.send("Contraseña incorrecta");
+  }
+
   await userService.updateLastConnection(user._id, {
     last_connection: new Date(),
   });
@@ -130,9 +136,15 @@ export const loginJwt = async (req, res) => {
   console.log(process.env.JWT_PRIVATE_KEY);
   console.log(token);
 
-  res
-    .cookie("coderCookieToken", token, { maxAge: 1000000000, httpOnly: true })
-    .redirect("/products");
+  if (email === "adminCoder@coder.com" && isPasswordValid) {
+    res
+      .cookie("coderCookieToken", token, { maxAge: 1000000000, httpOnly: true })
+      .redirect("/adminControlPanel");
+  } else {
+    res
+      .cookie("coderCookieToken", token, { maxAge: 1000000000, httpOnly: true })
+      .redirect("/products");
+  }
 };
 
 export const getCookies = (req, res) => {
