@@ -4,6 +4,10 @@ import UserService from "../services/user.service.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
 import { generateCartErrorInfo } from "../services/errors/info.js";
+import { transporter } from "../utils/emailService.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const cartService = new CartService();
 const productService = new ProductService();
@@ -90,8 +94,33 @@ export const deleteProductInCart = async (req, res) => {
   try {
     const cid = req.params.cid;
     const pid = req.params.pid;
+    const user = await userService.getUserByCartId(cid);
+
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
 
     const deleteProductInCart = await cartService.deleteProductInCart(pid, cid);
+
+    if (user.rol === "Premium") {
+      const message = {
+        from: {
+          name: "E-commerce",
+          address: process.env.AUTH_EMAIL,
+        },
+        to: `${user.email}`,
+        subject: "Producto eliminado de tu carrito",
+        text: "Producto eliminado de tu carrito",
+        html: `<p><b>Hola ${user.first_name} </b> el producto con id: ${pid} fue eliminado de tu carrito con id: ${cid}</p>`,
+      };
+      await transporter.sendMail(message);
+
+      return res
+        .status(200)
+        .send(
+          "Producto eliminado correctamente del carrito de un usuario Premium"
+        );
+    }
 
     if (deleteProductInCart) {
       res.status(200).send("Producto eliminado correctamente del carrito");

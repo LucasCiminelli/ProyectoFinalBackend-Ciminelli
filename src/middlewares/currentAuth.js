@@ -14,4 +14,12 @@ const isUser = (req, res, next) => {
   next();
 };
 
-export { isAdmin, isUser };
+const isPremium = (req, res, next) => {
+  if (req.session.rol !== "Premium") {
+    res.status(401).send("Autorización denegada");
+    return;
+  }
+  next();
+};
+
+export { isAdmin, isUser, isPremium };

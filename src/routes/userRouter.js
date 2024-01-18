@@ -53,7 +53,7 @@ router.get(
 
 router.post("/premium/:uid", userToPremium);
 router.post("/:uid/documents", uploadUserDocuments);
-router.delete("/users", deleteInactiveUsers);
+router.delete("/users", isAdmin, deleteInactiveUsers);
 router.delete("/adminDelete/:uid", isAdmin, adminDelete);
 router.put("/updateUserRol/:uid", isAdmin, updateRolByAdmin);
 

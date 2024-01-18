@@ -41,23 +41,19 @@ export const loginLocal = async (req, res) => {
   req.session.isLogged = true;
   req.session.cart = req.user.cart;
 
-  if (
-    req.user.email === "adminCoder@coder.com" &&
-    req.body.password === "adminCod3r123"
-  ) {
+  if (req.user.email === "adminCoder@coder.com") {
     req.session.rol = "Admin";
     return res.redirect("/adminControlPanel");
   } else {
     req.session.rol = "User";
+    res.redirect("/products");
   }
-
-  res.redirect("/products");
 };
 
 export const recoverLocal = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userService.getUsersByEmail(email);
+  const user = await userService.getUserByEmail(email);
 
   if (!user) {
     return res.send(
@@ -78,17 +74,12 @@ export const githubLogin = (req, res) => {
   req.session.age = req.user.age;
   req.session.isLogged = true;
 
-  if (
-    req.user.email === "adminCoder@coder.com" &&
-    req.body.password === "adminCod3r123"
-  ) {
+  if (req.user.email === "adminCoder@coder.com") {
     req.session.rol = "Admin";
-    return res.redirect("/products");
-  } else {
-    req.session.rol = "User";
+    return res.redirect("/profile");
   }
-
-  res.redirect("/profile");
+  req.session.rol = "User";
+  return res.redirect("/profile");
 };
 
 export const loginJwt = async (req, res) => {
@@ -105,7 +96,7 @@ export const loginJwt = async (req, res) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    return res.send("Contraseña incorrecta");
+    return res.send("Credenciales inválidas");
   }
 
   await userService.updateLastConnection(user._id, {
@@ -242,9 +233,12 @@ export const userToPremium = async (req, res) => {
 export const deleteInactiveUsers = async (req, res) => {
   try {
     const deletedUsers = await userService.deleteInactiveUsers();
-    for (user of deletedUsers) {
+    for (const user of deletedUsers) {
       const message = {
-        from: "emilia66@ethereal.email",
+        from: {
+          name: "E-commerce",
+          address: process.env.AUTH_EMAIL,
+        },
         to: `${user.email}`,
         subject: "Cuenta eliminada",
         text: "Tu cuenta fue eliminada.",

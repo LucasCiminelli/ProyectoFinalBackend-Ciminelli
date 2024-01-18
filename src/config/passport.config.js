@@ -99,6 +99,13 @@ const initializePassport = () => {
               password: "",
               email,
             });
+
+            const cart = await cartManager.createCart();
+
+            newUser.cart = cart._id;
+
+            await newUser.save();
+
             return done(null, newUser);
           }
 
