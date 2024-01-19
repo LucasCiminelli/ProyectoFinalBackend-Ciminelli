@@ -239,11 +239,25 @@ export const endPurchase = async (req, res) => {
 
     const productsNotPurchased = await cartService.endPurchase(cartId, userId);
     if (productsNotPurchased.length === 0) {
-      res
+      const message = {
+        from: {
+          name: "E-commerce",
+          address: process.env.AUTH_EMAIL,
+        },
+        to: `${user.email}`,
+        subject: "Tu compra fue realizada con exito!",
+        text: "Tu compra fue realizada con exito!",
+        html: `<p><b>Hola ${user.first_name} </b> 
+        Tu compra fue realizada con éxito. 
+        Gracias por comprar en E-commerce</p>`,
+      };
+      await transporter.sendMail(message);
+
+      return res
         .status(200)
         .send({ message: "Compra realizada con exito", success: true });
     } else {
-      res.status(500).json({
+      return res.status(500).json({
         error: "Algunos productos no pudieron ser comprados",
         productsNotPurchased,
       });

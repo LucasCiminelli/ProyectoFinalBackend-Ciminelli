@@ -1,0 +1,75 @@
+paths:
+  /api/users:
+    get:
+      summary: Obtiene a todos los usuarios
+      tags:
+        - Users
+      responses:
+        "200":
+          description: Se devolvieron correctamente los usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Users"
+        "500":
+          description: Algo fallo en la busqueda de usuarios
+  /api/updateUserRol/{uid}:
+    put:
+      summary: Actualiza el rol del usuario con su Id si sos Admin
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: Id del usuario a actualizar
+          schema:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateUserRol"
+      responses:
+        "200":
+          description: Se actualizó correctamente el rol
+          content:
+
+components:
+  schemas:
+    Users:
+      type: object
+      properties:
+        _id:
+          type: ObjectId()
+          description: Id unico del producto
+        first_name:
+          type: String
+          description: Nombre del usuario
+        last_name:
+          type: String
+          description: Apellido del usuario
+        email:
+          type: String
+          description: Email del usuario
+        rol:
+          type: String
+          description: Rol del usuario
+      example:
+        _id: 123asdsa213dAsd3
+        first_name: Nombre
+        last_name: Apellido
+        email: prueba@prueba.com
+        rol: User
+  requestBodies:
+    updateUserRol:
+      type: String
+      properties:
+        rol:
+          type: String
+          description: Rol del usuario a modificar
+      example:
+        rol: User
