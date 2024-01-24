@@ -21,6 +21,7 @@ import { logger } from "./utils/logger.js";
 import { errors } from "./middlewares/errors.js";
 
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 
 //import { messageModel } from "./dao/models/message.mode.js";
 import chatEvents from "./socket/chat.js";
@@ -54,7 +55,9 @@ app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 //Inicializando el servidor en el puerto establecido + tuki
 const httpServer = app.listen(PORT, () => console.log("tuki"));
+app.use(bodyParser.json());
 app.use(errors);
+
 const socketServer = new Server(httpServer);
 
 //Lineas mágicas
@@ -100,6 +103,11 @@ app.use("/api/carts", cartRouter);
 //logger
 app.get("/loggerTest", (req, res) => {
   res.send("Checking the logs");
+});
+
+socketServer.on("connection", (socket) => {
+  console.log(`Usuario conectado: ${socket.id}`);
+  // Puedes agregar más lógica aquí si es necesario
 });
 
 //socket

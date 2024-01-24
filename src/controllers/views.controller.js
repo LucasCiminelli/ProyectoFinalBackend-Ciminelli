@@ -74,6 +74,7 @@ export const renderCart = async (req, res) => {
     }
 
     const cartProducts = cart.products.map((prod) => ({
+      productId: prod.product._id,
       title: prod.product.title,
       quantity: prod.quantity,
       price: prod.product.price,

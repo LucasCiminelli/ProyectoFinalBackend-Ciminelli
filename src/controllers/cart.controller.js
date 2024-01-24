@@ -167,6 +167,7 @@ export const updateQuantityProdInCart = async (req, res) => {
     const cid = req.params.cid;
     const pid = req.params.pid;
     const quantity = req.body.quantity;
+    console.log("este es el req.body", req.body);
 
     const cart = await cartService.getCartsById(cid);
 
@@ -176,7 +177,7 @@ export const updateQuantityProdInCart = async (req, res) => {
     }
 
     const findProductInCart = cart.products.findIndex(
-      (prod) => prod.product.toString() === pid
+      (prod) => prod.product._id.toString() === pid
     );
 
     if (findProductInCart === -1) {
@@ -190,13 +191,13 @@ export const updateQuantityProdInCart = async (req, res) => {
 
     console.log(cart);
 
-    res.status(200).send({
+    return res.status(200).send({
       status: "success",
       updatedCart: cart,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error interno del servidor");
+    res.status(500).send(`Error interno del servidor: ${error.message}`);
   }
 };
 

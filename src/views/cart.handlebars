@@ -11,17 +11,34 @@
   <h1 class="text-3xl font-bold mb-4">Carrito de Compras</h1>
   <p class="mb-3">Este carrito pertenece al usuario: {{user.first_name}}</p>
 
-  <ul class="list-disc pl-4">
+  <ul class="list-disc pl-4" id="cartProductsContainer" data-cart-id="{{cid}}">
     {{#each products}}
       {{log this}}
-      <li class="mb-2">
+      <li class="mb-2" data-cart-id="{{cid}}">
         {{this.title}}
         - Cantidad:
+        <button
+          class="restar-button cursor-pointer"
+          data-cart-id="{{cid}}"
+          data-product-id="{{this.productId}}"
+          data-current-quantity="{{this.quantity}}"
+        >-</button>
         {{this.quantity}}
+        <button
+          class="sumar-button"
+          data-cart-id="{{cid}}"
+          data-product-id="{{this.productId}}"
+          data-current-quantity="{{this.quantity}}"
+        >+</button>
         - Precio: $
         {{price}}
         - Subtotal: ${{this.subtotal}}
 
+        <button
+          class="eliminar-producto"
+          data-cart-id="{{cid}}"
+          data-product-id="{{this.productId}}"
+        >🗑</button>
       </li>
 
     {{/each}}
@@ -36,6 +53,7 @@
   >
     End Purchase
   </button>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="/js/carts.js"></script>
 </div>

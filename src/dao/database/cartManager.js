@@ -27,8 +27,7 @@ export default class CartManager {
   async getCartsById(id) {
     const foundCart = await cartModel
       .findOne({ _id: id })
-      .populate("products.product")
-      .lean();
+      .populate("products.product");
 
     if (!foundCart) {
       logger.error("Error, Carrito no encontrado en la base de datos");
