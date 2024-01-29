@@ -34,7 +34,7 @@ mongoose.connect(process.env.URL_MONGO);
 
 //inicialización del servidor express y configurando servidor de web sockets
 const app = express();
-const PORT = process.env.EXPRESS_PORT;
+const PORT = process.env.EXPRESS_PORT || 8080;
 
 //Swagger
 const swaggerOptions = {
