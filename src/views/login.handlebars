@@ -1,31 +1,31 @@
-<div class="max-w-md mx-auto bg-white rounded p-8 mt-10">
-  <h1 class="text-2xl font-bold mb-4">Login</h1>
-  <form
-    action="http://localhost:8080/api/login"
-    method="post"
-    class="space-y-4"
-  >
-    <input
-      type="text"
-      name="email"
-      placeholder="Email"
-      class="w-full p-2 rounded border"
-    />
-    <input
-      type="password"
-      name="password"
-      placeholder="Password"
-      class="w-full p-2 rounded border"
-    />
+<div class="max-w-md mx-auto bg-white rounded p-8 mt-10 shadow-lg">
+  <h1
+    class="text-4xl font-extrabold mb-8 text-center text-indigo-600"
+  >Login</h1>
+  <form action="/api/login" method="post" class="space-y-4">
+    <div class="relative">
+      <input
+        type="text"
+        name="email"
+        placeholder="Email"
+        class="w-full p-3 rounded border bg-gray-100 focus:outline-none focus:border-blue-500 transition-all duration-300"
+      />
+    </div>
+    <div class="relative">
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        class="w-full p-3 rounded border bg-gray-100 focus:outline-none focus:border-blue-500 transition-all duration-300"
+      />
+    </div>
     <button
       type="submit"
-      class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    >
-      Log in
-    </button>
+      class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition-all duration-300"
+    >Log in</button>
 
     <button
-      class="w-full bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+      class="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"
     >
       <a
         href="http://localhost:8080/api/github"
@@ -40,7 +40,7 @@
           >
             <path
               fill-rule="evenodd"
-              d="M8 .25a8 8 0 0 0-2.534 15.556c.4.074.547-.175.547-.387 0-.19-.007-.733-.011-1.44-2.23 .484-2.695-1.076-2.695-1.076-.363-.92-.887-1.168-.887-1.168-.725-.494.056-.483.056-.483.803.056 1.225.83 1.225.83.714 1.227 1.872.873 2.328 .665.073-.52.278-.873.506-1.073-1.774-.2-3.642-.887-3.642-3.946 0-.873.312-1.587.823-2.145-.083-.202-.36-1.018.078-2.122 0 0 .67-.215 2.2.82.64-.177 1.325-.266 2.004-.27.678.004 1.364.093 2.004.27 1.53-1.035 2.198-.82 2.198-.82 .44 1.104.16 1.92 .078 2.122 .51.558.82 1.272 .82 2.145 0 3.066-1.87 3.742-3.648 3.937.287.247.542.733 .542 1.48 0 1.067-.01 1.928-.01 2.193 0 .216.145.465.55.385A7.995 7.995 0 0 0 8 .25"
+              d="M8 .25a8 8 0 0 0-2.534 15.556c.4.074.547-.175.547-.387 0-.19-.007-.733-.011-1.44-2.23.484-2.695-1.076-2.695-1.076-.363-.92-.887-1.168-.887-1.168-.725-.494.056-.483.056-.483.803.056 1.225.83 1.225.83.714 1.227 1.872.873 2.328 .665.073-.52.278-.873.506-1.073-1.774-.200-3.642-.887-3.642-3.946 0-.873.312-1.587.823-2.145-.083-.202-.36-1.018.078-2.122 0 0 .67-.215 2.2.82.64-.177 1.325-.266 2.004-.27.678.004 1.364.093 2.004.27 1.53-1.035 2.198-.82 2.198-.82 .44 1.104.16 1.92 .078 2.122 .51.558.82 1.272 .82 2.145 0 3.066-1.87 3.742-3.648 3.937.287.247.542.733 .542 1.48 0 1.067-.01 1.928-.01 2.193 0 .216.145.465.55.385A7.995 7.995 0 0 0 8 .25"
             />
           </svg>
         </span>
@@ -48,15 +48,21 @@
       </a>
     </button>
 
-    <button><a
-        href="/loginJwt"
-        class="text-blue-500"
-      >Login with JWT</a></button>
-    <br />
-    <a href="http://localhost:8080/recover" class="text-blue-500">Forgot
-      Password?</a>
-  </form>
-  <p class="mt-4">Don't have an account?
-    <a href="/signup" class="text-blue-500">Sign up here!</a></p>
+    <button
+      class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"
+    >
+      <a href="/loginJwt" class="flex items-center justify-center">
+        Login with JWT
+      </a>
+    </button>
 
+    <a
+      href="http://localhost:8080/recover"
+      class="text-blue-500 block text-center mt-4"
+    >Forgot Password?</a>
+  </form>
+
+  <p class="mt-4 text-center">Don't have an account?
+    <a href="/signup" class="text-blue-500">Sign up here!</a>
+  </p>
 </div>

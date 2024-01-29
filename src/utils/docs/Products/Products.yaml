@@ -77,13 +77,13 @@ paths:
             $type: String
       responses:
         "200":
-          description: Usuario eliminado correctamente
+          description: Producto eliminado correctamente
           content:
             application/json:
               schema:
                 $ref: "#components/schemas/Product"
         "500":
-          description: Algo fallo al eliminar al usuario de la BD
+          description: Algo fallo al eliminar al producto de la BD
 
 components:
   schemas:
