@@ -129,11 +129,17 @@ export const loginJwt = async (req, res) => {
 
   if (email === "adminCoder@coder.com" && isPasswordValid) {
     res
-      .cookie("coderCookieToken", token, { maxAge: 1000000000, httpOnly: true })
+      .cookie("coderCookieToken", token, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      })
       .redirect("/adminControlPanel");
   } else {
     res
-      .cookie("coderCookieToken", token, { maxAge: 1000000000, httpOnly: true })
+      .cookie("coderCookieToken", token, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      })
       .redirect("/products");
   }
 };
